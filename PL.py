@@ -1,12 +1,30 @@
 __author__ = 'luisdiegopizarro'
 from sympy.solvers import solve
 from sympy import Symbol
+import re
 
+def findXY(ecua):
+    if ecua.find('y')==-1:
+        return 1
+    if ecua.find('x')==-1:
+        return 2
+    else:
+        return 0
 
+def findInt(ecua):
+    return int(re.findall(r'\d+', ecua)[0])
 
-#print(lambda:1)
-
-
+def eliminaRepetidos(lista):
+    lista_nueva=[lista[0]]
+    for i in lista:
+      repetido=1
+      for y  in lista_nueva:
+          if i==y:
+              repetido=0
+              break
+      if repetido:
+          lista_nueva.append(i)
+    return lista_nueva
 
 
 
@@ -44,25 +62,41 @@ def intersection(L1, L2):
     else:
         return False
 
-restricciones=["6*x+4*y<=24",'x+2*y<=6','-x+y<=1','y<=2']
-ecuaciones=["6*x+4*y-(24)",'x+2*y-6','-x+y-1']
+restricciones=["6*x+4*y<=24",'x+2*y<=6','-x+y<=1','y<=2','x>=0']
+ecuaciones=["6*x+4*y-(24)",'x+2*y-6','-x+y-1','y-2']
 rectas=[]
 puntos=[]
 puntosSolucion=[]
 
 for i in ecuaciones:
     form1=Ecuacion()
-    form1.setPoints(lambda:eval(i))
+    xy=findXY(i)
+    if xy==0:
+        form1.setPoints(lambda x,y:eval(i))
+    else:
+        entero=findInt(i)
+        if xy==1:#inecuacion sin y
+            form1.pto1.append(entero)
+            form1.pto1.append(0)
+
+            form1.pto2.append(entero)
+            form1.pto2.append(1)
+        if xy==2:#inecucion sin x
+            form1.pto1.append(0)
+            form1.pto1.append(entero)
+
+            form1.pto2.append(1)
+            form1.pto2.append(entero)
     rectas.append(form1)
     puntos.append(form1.pto1)
     puntos.append(form1.pto2)
 
-
+'''
 #intersecciones con los ejes
 for e in rectas:
     print(e.pto1)
     print(e.pto2)
-
+'''
 
 for x in range(0,len(rectas)):
     for y in range(x, len(rectas)):
@@ -85,7 +119,7 @@ for p in puntos:
     if contador==len(restricciones):
         puntosSolucion.append(p)
 
-
+puntosSolucion=eliminaRepetidos(puntosSolucion)
 for a in puntosSolucion:
     print(a)
 
