@@ -44,3 +44,6 @@ class Preparser:
         def GetRestrictions():
             return self._restricciones[:]
 
+        def GetOriginals():
+            return self._inequations[:]
+
