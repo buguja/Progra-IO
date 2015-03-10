@@ -1,23 +1,35 @@
 __author__ = "José Pablo Parajeles"
 import Tools
 
+
 class Preparser:
     MIN = 0
     MAX = 1
 
+    def __init__(self, p_s_func_obj="", p_l_s_restricciones=[], p_c_tipo=MAX) -> object:
+        """Preparsea las expresiones
 
 
-    def __init__(self, p_s_func_obj="", p_l_s_restricciones=[], p_c_tipo=MAX):
+            :rtype : object
+            :param p_s_func_obj: string forma "var + num" sin =
+            :param p_l_s_restricciones: lsita de strings de forma "var + num comparador var + num"
+            :param p_c_tipo: Min o MAX
+            """
         self._inequations = []
         self.funcion_objetivo = p_s_func_obj
         self._restricciones = p_l_s_restricciones[:]
         self.tipo = p_c_tipo
-        self.Reformat()
+        self.rs_reformat()
+        self.fo_reformat()
 
-    def Reformat(self):
+    def rs_reformat(self):
+        """Agrega * en multiplicaciones donde se omite. Ademas remueve comparadores
+
+
+        """
         restric = []
         defaults = []
-        for op in self.restricciones:
+        for op in self._restricciones:
             current = []
             origin = []
             last = ""
@@ -41,9 +53,27 @@ class Preparser:
         self._restricciones = restric
         self._inequations = defaults
 
-        def GetRestrictions():
-            return self._restricciones[:]
+    def fo_reformat(self):
+        """Agrega * en multiplicaciones donde se omite
 
-        def GetOriginals():
-            return self._inequations[:]
+
+        """
+        last = ""
+        current = []
+        for actual in self.funcion_objetivo:
+            if( not Tools.IsDigit(actual) and not Tools.IsOperator(actual) and Tools.IsDigit(last) ):
+                    current.append("*")
+            last = actual
+            current.append(actual)
+
+    def get_restrictions(self):
+        """Retorna las restricciones
+
+
+        :return: List
+        """
+        return self._restricciones[:]
+
+    def get_originals(self):
+        return self._inequations[:]
 

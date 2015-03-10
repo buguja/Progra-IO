@@ -53,4 +53,4 @@ b = [
 ]
 
 a = PreParser.Preparser(p_l_s_restricciones=b)
-print(a.restricciones)
+print(a.get_restrictions())
