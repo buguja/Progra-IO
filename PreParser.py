@@ -10,10 +10,6 @@ class Preparser:
         """Preparsea las expresiones
 
 
-            :rtype : object
-            :param p_s_func_obj: string forma "var + num" sin =
-            :param p_l_s_restricciones: lsita de strings de forma "var + num comparador var + num"
-            :param p_c_tipo: Min o MAX
             """
         self._inequations = []
         self.funcion_objetivo = p_s_func_obj
@@ -43,6 +39,7 @@ class Preparser:
                     continue
                 elif( not Tools.IsDigit(actual) and not Tools.IsOperator(actual) and Tools.IsDigit(last) ):
                     current.append("*")
+                    origin.append("*")
                 last = actual
                 origin.append(actual)
                 current.append(actual)
@@ -70,7 +67,7 @@ class Preparser:
         """Retorna las restricciones
 
 
-        :return: List
+        :return: list of [str]
         """
         return self._restricciones[:]
 
