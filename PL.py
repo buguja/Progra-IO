@@ -23,7 +23,7 @@ class Ecuacion():
     def setPoints(self,ecua):
         y = Symbol('y')
         x=0
-        self.pto1=(x,solve(ecua(x,y), y)[0])
+        self.pto1=(x,  (ecua(x,y), y)[0])
 
         x = Symbol('x')
         y=0
