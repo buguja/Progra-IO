@@ -4,6 +4,17 @@ from sympy import Symbol
 import re
 import PreParser
 
+
+def getPtosArea(restricciones,ecuaciones):
+
+    todospuntos=calcularPuntosEjes(ecuaciones)
+    rectas=todospuntos[0]#tiene los puntos para saber las rectas y luego calcular intersecciones
+    puntosArea=todospuntos[1]#guarda los puntos de dichas rectas
+
+    puntosArea=(calcularPuntosInterseccion(rectas,puntosArea))#se le agregar los puntos de intersecciones de rectas
+    puntosSol=puntosSolucion(puntosArea,restricciones)
+    print(puntosSol)
+
 class Ecuacion():
     def __init__(self):
         self.pto1=[]
@@ -17,8 +28,6 @@ class Ecuacion():
         x = Symbol('x')
         y=0
         self.pto2=(solve(ecua(x,y), x)[0],y)
-
-
 
 def line(p1, p2):
     A = (p1[1] - p2[1])
@@ -64,23 +73,7 @@ def eliminaRepetidos(lista):
     return lista_nueva
 
 
-
-restricciones=["6*x+4*y<=24",'x+2*y<=6','-x+y<=1','y<=2','x>=0']
-ecuaciones=["6*x+4*y-(24)",'x+2*y-6','-x+y-1','y-2']
-
-
-def getPtosArea(restricciones,ecuaciones):
-
-    todospuntos=calcularPuntosEjes()
-    rectas=todospuntos[0]#tiene los puntos para saber las rectas y luego calcular intersecciones
-    puntosArea=todospuntos[1]#guarda los puntos de dichas rectas
-
-    puntosArea=(calcularPuntosInterseccion(rectas,puntosArea))#se le agregar los puntos de intersecciones de rectas
-    puntosSol=puntosSolucion(puntosArea)
-    print(puntosSol)
-
-
-def calcularPuntosEjes():
+def calcularPuntosEjes(ecuaciones):
     rectas=[]
     puntos=[]
     for i in ecuaciones:
@@ -117,7 +110,7 @@ def calcularPuntosInterseccion(rectas,puntos):
 
 
 
-def puntosSolucion(puntos):
+def puntosSolucion(puntos,restricciones):
     puntosSol=[]
     for p in puntos:
         x=p[0]
@@ -134,7 +127,20 @@ def puntosSolucion(puntos):
     puntosSol=eliminaRepetidos(puntosSol)
     return puntosSol
 
-getPtosArea(restricciones,ecuaciones)
+b = [
+    "6x+4y<=24",
+    "x+2y<=6",
+    "-x+y<=1",
+    "y<=2",
+    "x>=0"
+]
+
+
+a = PreParser.Preparser(p_l_s_restricciones=b)
+
+
+getPtosArea(a.get_originals(),a.get_restrictions())
+
 
 
 
