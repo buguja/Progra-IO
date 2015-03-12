@@ -2,18 +2,18 @@ __author__ = 'luisdiegopizarro'
 from sympy.solvers import solve
 from sympy import Symbol
 import re
-import PreParser
+import math
 
 
-def getPtosArea(restricciones,ecuaciones):
+def getPtosArea(originals,restricciones):
 
-    todospuntos=calcularPuntosEjes(ecuaciones)
+    todospuntos=calcularPuntosEjes(restricciones)
     rectas=todospuntos[0]#tiene los puntos para saber las rectas y luego calcular intersecciones
     puntosArea=todospuntos[1]#guarda los puntos de dichas rectas
 
     puntosArea=(calcularPuntosInterseccion(rectas,puntosArea))#se le agregar los puntos de intersecciones de rectas
-    puntosSol=puntosSolucion(puntosArea,restricciones)
-    print(puntosSol)
+    puntosSol=puntosSolucion(puntosArea,originals)
+    return sortPointsPolygon(puntosSol)
 
 class Ecuacion():
     def __init__(self):
@@ -23,7 +23,7 @@ class Ecuacion():
     def setPoints(self,ecua):
         y = Symbol('y')
         x=0
-        self.pto1=(x,  (ecua(x,y), y)[0])
+        self.pto1=(x,solve(ecua(x,y), y)[0])
 
         x = Symbol('x')
         y=0
@@ -50,7 +50,7 @@ def intersection(L1, L2):
 def findXY(ecua):
     if ecua.find('y')==-1:
         return 1
-    elif ecua.find('x')==-1:
+    if ecua.find('x')==-1:
         return 2
     else:
         return 0
@@ -127,21 +127,7 @@ def puntosSolucion(puntos,restricciones):
     puntosSol=eliminaRepetidos(puntosSol)
     return puntosSol
 
-b = [
-    "6x+4y<=24",
-    "x+2y<=6",
-    "-x+y<=1",
-    "y<=2",
-    "x>=0"
-]
-
-
-a = PreParser.Preparser(p_l_s_restricciones=b)
-
-
-getPtosArea(a.get_originals(),a.get_restrictions())
-
-
-
-
-
+def sortPointsPolygon(pp):
+    cent=(sum([p[0] for p in pp])/len(pp),sum([p[1] for p in pp])/len(pp))
+    pp.sort(key=lambda p: math.atan2(p[1]-cent[1],p[0]-cent[0]))
+    return pp
