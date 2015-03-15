@@ -5,15 +5,24 @@ import re
 import math
 
 
-def getPtosArea(originals,restricciones):
+def getDatosPL(originals,restricciones,FO):
 
     todospuntos=calcularPuntosEjes(restricciones)
     rectas=todospuntos[0]#tiene los puntos para saber las rectas y luego calcular intersecciones
     puntosArea=todospuntos[1]#guarda los puntos de dichas rectas
 
+
+
     puntosArea=(calcularPuntosInterseccion(rectas,puntosArea))#se le agregar los puntos de intersecciones de rectas
     puntosSol=puntosSolucion(puntosArea,originals)
-    return sortPointsPolygon(puntosSol)
+    print(puntosSol)
+
+    Limites=getMaxXY(puntosArea)
+    max_x=Limites[0]
+    max_y=Limites[1]
+
+    puntosSol=sortPointsPolygon(puntosSol)
+    return [puntosSol,max_x,max_y]
 
 class Ecuacion():
     def __init__(self):
@@ -79,21 +88,26 @@ def calcularPuntosEjes(ecuaciones):
     for i in ecuaciones:
         form1=Ecuacion()
         xy=findXY(i)
+        entero=1
         if xy==0:
             form1.setPoints(lambda x,y:eval(i))
+            puntos.append(form1.pto1)
+            puntos.append(form1.pto2)
         else:
             entero=findInt(i)
             if xy==1:#inecuacion sin y
                 form1.pto1=(entero,0)
                 form1.pto2=(entero,1)
+                puntos.append(form1.pto1)
 
             if xy==2:#inecucion sin x
                 form1.pto1=(0,entero)
                 form1.pto2=(1,entero)
+                puntos.append(form1.pto2)
 
-        rectas.append(form1)
-        puntos.append(form1.pto1)
-        puntos.append(form1.pto2)
+        if entero!=0:#esta condicion es para no volver a meter los ejes x>=0 y>=0
+            rectas.append(form1)
+
     return [rectas,puntos]
 
 
@@ -107,6 +121,7 @@ def calcularPuntosInterseccion(rectas,puntos):
                 puntos.append(R)
     puntos.append((0,0))
     return puntos
+
 
 
 
@@ -131,3 +146,43 @@ def sortPointsPolygon(pp):
     cent=(sum([p[0] for p in pp])/len(pp),sum([p[1] for p in pp])/len(pp))
     pp.sort(key=lambda p: math.atan2(p[1]-cent[1],p[0]-cent[0]))
     return pp
+
+def getMaxXY(puntos):#retorna losvalores maximos para poder dibujar bien cada eje
+    max_x=0
+    max_y=0
+    for i in puntos:
+        x=i[0]
+        y=i[1]
+        if(x>max_x):
+            max_x=x
+        if(y>max_y):
+            max_y=y
+    return [max_x,max_y]
+
+def getPtosOptimos(puntos,FO,determin):#determin 1 Max 0 para Min
+
+    ptosOptimos=[]
+    x=puntos[0][0]
+    y=puntos[0][1]
+    ptoOp=eval(FO)
+    ptosOptimos.append((x,y))#se agrega el primer punto para tener un margen de comparacion
+    if determin==1:
+        fun=lambda x:x>=ptoOp
+    elif determin==0:
+        fun=lambda x:x<=ptoOp
+
+    puntos=puntos[1:]
+    for i in puntos:
+        x=i[0]
+        y=i[1]
+        ptoEval=eval(FO)
+
+        if fun(ptoEval):
+            if ptoEval==ptoOp:#si se encuentra un optimo con el mismo valor
+                ptosOptimos.append((x,y))
+            else:
+                ptosOptimos=[(x,y)]
+            ptoOp=ptoEval
+
+    return (ptosOptimos,ptoOp)
+
