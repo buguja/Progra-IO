@@ -1,21 +1,18 @@
 __author__ = 'luisdiegopizarro/José Pablo'
-
+from Tools import findInt, findXY, setdiff
 import matplotlib.pyplot as plt
 import numpy as np
 from sympy import solve
-
-
-
-import PL
-import PreParser
-
 
 def despejar(f,var):
     a = solve(f,var)
     print(str(a[0]))
     return str(a[0])
 
-def Dibujar(puntos,ptosOptimos,valorOptimo,equations,originals,lenght_x,lenght_y):
+
+def dibujar(puntos,ptosOptimos,valorOptimo,equations,originals,lenght_x,lenght_y):
+
+
 
     #lenght_x=20
     #lenght_y=20
@@ -33,11 +30,11 @@ def Dibujar(puntos,ptosOptimos,valorOptimo,equations,originals,lenght_x,lenght_y
     print(lenght_y)
 
     for eq in equations:
-        xy=PL.findXY(eq)
+        xy=findXY(eq)
         if xy==0:
             ax.plot(x, eval(despejar(eq,"y")), lw=2.0)
         else:
-            entero=PL.findInt(eq)
+            entero=findInt(eq)
 
             if xy==1:#inecuacion sin y
                 y=(0,100000000000)
@@ -48,104 +45,26 @@ def Dibujar(puntos,ptosOptimos,valorOptimo,equations,originals,lenght_x,lenght_y
                 x1=(0,100000000000)
                 y=(entero,entero)
                 ax.plot(x1,y,lw=2.0)
-
-    for dot in puntos:
+    optimos = []
+    for opdot in ptosOptimos:
+        opdot_x = opdot[0]
+        opdot_y = opdot[1]
+        optimos.append("{} = {}".format(opdot,valorOptimo))
+        ax.plot(opdot_x, opdot_y,"p",markersize=12, lw=2.0)
+    others = setdiff(puntos, ptosOptimos)
+    for dot in others:
         ax.plot(dot[0],dot[1], "o",lw=2.0)
 
     ax.grid('on')
-    plt.legend(originals+ptosOptimos+[valorOptimo])
+
+    plt.legend(originals+optimos,bbox_to_anchor=(0.75, 1), loc=2, borderaxespad=0.)
+
+
 
     plt.show()
 
 
 
 
-def Grafica(restricciones,FO):
-    parseado = PreParser.Preparser(p_l_s_restricciones=restricciones)
-
-    origin=parseado.get_originals()
-    restric=parseado.get_restrictions()
-
-
-    DataGraficar=PL.getDatosPL(origin,restric,FO)
-    puntos=DataGraficar[0]
-    max_x=int(DataGraficar[1]*1.10)
-    max_y=int(DataGraficar[2]*1.10)
-
-    po=PL.getPtosOptimos(puntos,FO,1);
-
-    Dibujar(puntos,po[0],po[1],restric,origin,max_x,max_y)
-
-b = [
-    "6x+4y<=24",
-    "x+2y<=6",
-    "-x+y<=1",
-    "y<=2",
-    "x>=0"
-]
-
-c=[
-    "4x+5y<=40",
-    "2x+5y<=30",
-    "x>=0",
-    "y>=0"
-]
-
-'''
-d=[
-    "x+y-200>=0",
-    "x>=0",
-    "1000-x>=0",
-    "y>=0",
-    "700-y>=0",
-    "800-x-y>=0"
-
-]
-
-Grafica(d,"6*x+10*y+3000")
-'''
-
-'''
-e=[
-    "x<=2000",
-    "y<=2000",
-    "x+y<=3000"
-]
-
-Grafica(e,"1000*x+1500*y")
-'''
-
-'''
-f=[
-    "x+3y<=15",
-    "5x+y<=20",
-    "3x+4y<=24"
-]
-Grafica(f,"0.75*x+y")
-'''
-
-'''
-g=[
-    "x+y>=6",
-    "x+y<=2",
-    "x>=0",
-    "y>=0"
-]
-Grafica(g,"3*x+8*y")
-'''
-
-h=[
-    "y<=2x",
-    "y>=x/2"
-]
-Grafica(h,"x+y")
-
-
-
-
-#restricciones
-#['6*x+4*y-(24)', 'x+2*y-(6)', '-x+y-(1)', 'x*y*x*1+2*x-(3*x)', '3*a-(2)']
-#originals
-#['6*x+4*y<=24', 'x+2*y<=6', '-x+y<=1', 'x*y*x*1+2*x>=3*x', '3*a<=2']
 
 

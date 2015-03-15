@@ -1,7 +1,8 @@
+from Tools import findXY, findInt
+
 __author__ = 'luisdiegopizarro'
 from sympy.solvers import solve
 from sympy import Symbol
-import re
 import math
 
 
@@ -55,18 +56,9 @@ def intersection(L1, L2):
     else:
         return False
 
-#verifica si en un string hay x o y
-def findXY(ecua):
-    if ecua.find('y')==-1:
-        return 1
-    if ecua.find('x')==-1:
-        return 2
-    else:
-        return 0
 
-#retorna el numero de una ecuacion x>=2 return 2
-def findInt(ecua):
-    return int(re.findall(r'\d+', ecua)[0])
+
+
 
 #eilima los repetidos de una arreglo
 def eliminaRepetidos(lista):

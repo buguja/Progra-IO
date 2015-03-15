@@ -6,11 +6,7 @@ class Preparser:
     MIN = 0
     MAX = 1
 
-    def __init__(self, p_s_func_obj="", p_l_s_restricciones=[], p_c_tipo=MAX) -> object:
-        """Preparsea las expresiones
-
-
-            """
+    def __init__(self, p_s_func_obj="", p_l_s_restricciones=[], p_c_tipo=MAX):
         self._inequations = []
         self.funcion_objetivo = p_s_func_obj
         self._restricciones = p_l_s_restricciones[:]
@@ -19,10 +15,6 @@ class Preparser:
         self.fo_reformat()
 
     def rs_reformat(self):
-        """Agrega * en multiplicaciones donde se omite. Ademas remueve comparadores
-
-
-        """
         restric = []
         defaults = []
         for op in self._restricciones:
@@ -51,10 +43,6 @@ class Preparser:
         self._inequations = defaults
 
     def fo_reformat(self):
-        """Agrega * en multiplicaciones donde se omite
-
-
-        """
         last = ""
         current = []
         for actual in self.funcion_objetivo:
@@ -64,11 +52,6 @@ class Preparser:
             current.append(actual)
 
     def get_restrictions(self):
-        """Retorna las restricciones
-
-
-        :return: list of [str]
-        """
         return self._restricciones[:]
 
     def get_originals(self):
