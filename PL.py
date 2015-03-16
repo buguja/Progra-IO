@@ -95,7 +95,7 @@ def calcularPuntosEjes(ecuaciones):
             if xy==2:#inecucion sin x
                 form1.pto1=(0,entero)
                 form1.pto2=(1,entero)
-                puntos.append(form1.pto2)
+                puntos.append(form1.pto1)
 
         if entero!=0:#esta condicion es para no volver a meter los ejes x>=0 y>=0
             rectas.append(form1)
