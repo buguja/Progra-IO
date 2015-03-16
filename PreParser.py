@@ -50,6 +50,7 @@ class Preparser:
                     current.append("*")
             last = actual
             current.append(actual)
+        self.funcion_objetivo = "".join(current)
 
     def get_restrictions(self):
         return self._restricciones[:]
