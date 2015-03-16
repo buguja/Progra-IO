@@ -7,6 +7,7 @@ __author__ = 'José Pablo Parajeles'
 
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
+from tkinter.messagebox import showwarning,showerror
 import Tools
 
 
@@ -55,17 +56,17 @@ class Application(tk.Frame):
         try:
             parser.init(self.TextF.get("1.0","end-1c"))
         except IndexError:
-            tk.Message("No hay suficientes equaciones validas")
+            showerror("Error","No hay suficientes equaciones validas")
             return
 
         if(parser.val!=2):
-            tk.Message("No tiene 2 variables, tiene: "+parser.val )
+            showerror("Error","No tiene 2 variables, tiene: {}".format(parser.val) )
             return
         if len(parser.errorequa)>0:
-            msj="Error en las siguientes restricciones"+("\n".join(parser.errorequa))
-            tk.Message(msj)
+            msj_1="\n".join(parser.errorequa)
+            showwarning(self,"Error en las siguientes restricciones:\n {}".format(msj_1))
         if len(parser.eq)<1:
-            tk.Message("No hay suficientes restricciones validas")
+            showerror(self,"No hay suficientes restricciones validas")
             return
         pre = Preparser(parser.fo,parser.eq,parser.Mm)
         origin=pre.get_originals()
