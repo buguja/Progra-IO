@@ -1,13 +1,14 @@
 import Graficador
 import PL
-from Parser_PL import ParserPLG
-from PosParser import Posparser
+from Parser.Parser_PL import ParserPLG
+from Parser.PosParser import Posparser
+from Parser.PreParser import Preparser
 
 __author__ = 'José Pablo Parajeles'
 
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
-from tkinter.messagebox import showwarning,showerror
+from tkinter.messagebox import showwarning, showerror
 import Tools
 
 
@@ -48,41 +49,48 @@ class Application(tk.Frame):
 
     def load(self):
         self.file = askopenfilename()
-        self.TextF.insert("1.0",Tools.read(self.file))
+        pre = Preparser(self.file)
+        self.FileNameName["text"]=self.file
+        if(not pre.pl()):
+            showerror(self, "Error al abrir el archivo")
+        if len(pre.errors)>0:
+            msj_1 = "\n".join(pre.errors)
+            showwarning(self, "Error en las siguientes restricciones:\n {}".format(msj_1))
+        self.TextF.insert("1.0", pre.text)
 
     def _metodo_grafico(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1]=="\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
         parser = ParserPLG()
-
         try:
-            parser.init(self.TextF.get("1.0","end-1c"))
+            parser.init(text_f_get)
         except IndexError:
-            showerror("Error","No hay suficientes equaciones validas")
+            showerror("Error", "No hay suficientes equaciones validas")
             return
-
-        if(parser.val!=2):
-            showerror("Error","No tiene 2 variables, tiene: {}".format(parser.val) )
+        if (parser.val != 2):
+            showerror("Error", "No tiene 2 variables, tiene: {}".format(parser.val))
             return
-        if len(parser.errorequa)>0:
-            msj_1="\n".join(parser.errorequa)
-            showwarning(self,"Error en las siguientes restricciones:\n {}".format(msj_1))
-        if len(parser.eq)<1:
-            showerror(self,"No hay suficientes restricciones validas")
+        if len(parser.errorequa) > 0:
+            msj_1 = "\n".join(parser.errorequa)
+            showwarning(self, "Error en las siguientes restricciones:\n {}".format(msj_1))
+        if len(parser.eq) < 1:
+            showerror(self, "No hay suficientes restricciones validas")
             return
-        pre = Posparser(parser.fo,parser.eq,parser.Mm)
-        origin=pre.get_originals()
-        restric=pre.get_restrictions()
+        pos = Posparser(parser.fo, parser.eq, parser.Mm)
+        origin = pos.get_originals()
+        restric = pos.get_restrictions()
 
-        objetivo = pre.funcion_objetivo
-        DataGraficar=PL.getDatosPL(origin,restric, objetivo)
-        puntos=DataGraficar[0]
-        max_x=int(DataGraficar[1]*1.10)
-        max_y=int(DataGraficar[2]*1.10)
+        objetivo = pos.funcion_objetivo
+        DataGraficar = PL.getDatosPL(origin, restric, objetivo)
+        puntos = DataGraficar[0]
+        max_x = int(DataGraficar[1] * 1.10)
+        max_y = int(DataGraficar[2] * 1.10)
 
-        po=PL.getPtosOptimos(puntos,objetivo,1);
+        po = PL.getPtosOptimos(puntos, objetivo, 1);
 
-        Graficador.dibujar(puntos,po[0],po[1],restric,origin,max_x,max_y)
-
-
+        Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
 
 
     def _transporte(self):
@@ -94,6 +102,5 @@ class Application(tk.Frame):
 
 root = tk.Tk()
 app = Application(master=root)
-
 
 app.mainloop()

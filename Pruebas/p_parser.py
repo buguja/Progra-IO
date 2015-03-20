@@ -1,5 +1,5 @@
 __author__ = 'José Pablo'
-import Parser_PL
+from Parser import Parser_PL
 
 txt = "1\n3u+2w\n   6x + d <=3\nvaa\n3x+3<=3\n3u+3x=0\na==2\nu+u<u+u=3\nxx+3=0 "
 

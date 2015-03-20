@@ -1,23 +1,25 @@
 import Graficador
 import PL
-import PosParser
+from Parser import PosParser
 
 __author__ = 'José Pablo'
-def Grafica(restricciones,FO):
+
+
+def Grafica(restricciones, FO):
     parseado = PosParser.Posparser(p_l_s_restricciones=restricciones)
 
-    origin=parseado.get_originals()
-    restric=parseado.get_restrictions()
+    origin = parseado.get_originals()
+    restric = parseado.get_restrictions()
 
+    DataGraficar = PL.getDatosPL(origin, restric, FO)
+    puntos = DataGraficar[0]
+    max_x = int(DataGraficar[1] * 1.10)
+    max_y = int(DataGraficar[2] * 1.10)
 
-    DataGraficar=PL.getDatosPL(origin,restric,FO)
-    puntos=DataGraficar[0]
-    max_x=int(DataGraficar[1]*1.10)
-    max_y=int(DataGraficar[2]*1.10)
+    po = PL.getPtosOptimos(puntos, FO, 1);
 
-    po=PL.getPtosOptimos(puntos,FO,1);
+    Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
 
-    Graficador.dibujar(puntos,po[0],po[1],restric,origin,max_x,max_y)
 
 b = [
     "6x+4y<=24",
@@ -27,15 +29,14 @@ b = [
     "x>=0"
 ]
 
-c=[
+c = [
     "4x+5y<=40",
     "2x+5y<=30",
     "x>=0",
     "y>=0"
 ]
 
-
-d=[
+d = [
     "x+y-200>=0",
     "x>=0",
     "1000-x>=0",
@@ -45,7 +46,7 @@ d=[
 
 ]
 
-Grafica(c,"6*x+10*y+3000")
+Grafica(c, "6*x+10*y+3000")
 """
 e=[
     "x<=2000",
