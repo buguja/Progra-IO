@@ -41,7 +41,7 @@ ax.grid('on')
 plt.show()
 """
 
-import PreParser
+import PosParser
 
 
 b = [
@@ -53,7 +53,7 @@ b = [
 ]
 
 
-a = PreParser.Preparser(p_l_s_restricciones=b)
+a = PosParser.Posparser(p_l_s_restricciones=b)
 print(a.get_restrictions())
 print(a.get_originals())
 

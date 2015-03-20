@@ -1,7 +1,7 @@
 import Graficador
 import PL
 from Parser_PL import ParserPLG
-from PreParser import Preparser
+from PosParser import Posparser
 
 __author__ = 'José Pablo Parajeles'
 
@@ -68,7 +68,7 @@ class Application(tk.Frame):
         if len(parser.eq)<1:
             showerror(self,"No hay suficientes restricciones validas")
             return
-        pre = Preparser(parser.fo,parser.eq,parser.Mm)
+        pre = Posparser(parser.fo,parser.eq,parser.Mm)
         origin=pre.get_originals()
         restric=pre.get_restrictions()
 

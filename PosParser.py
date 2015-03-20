@@ -2,7 +2,7 @@ __author__ = "José Pablo Parajeles"
 import Tools
 
 
-class Preparser:
+class Posparser:
     MIN = 0
     MAX = 1
 

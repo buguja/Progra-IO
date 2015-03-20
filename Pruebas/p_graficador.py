@@ -1,10 +1,10 @@
 import Graficador
 import PL
-import PreParser
+import PosParser
 
 __author__ = 'José Pablo'
 def Grafica(restricciones,FO):
-    parseado = PreParser.Preparser(p_l_s_restricciones=restricciones)
+    parseado = PosParser.Posparser(p_l_s_restricciones=restricciones)
 
     origin=parseado.get_originals()
     restric=parseado.get_restrictions()
