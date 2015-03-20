@@ -63,7 +63,7 @@ ax.set_aspect('equal')
 fig = plt.gcf()
 fig.gca().add_artist(pol)
 t = np.linspace(0, 1000, 100)
-#x = np.linspace(0, 1000, 100)
+# x = np.linspace(0, 1000, 100)
 
 #dibuja las lineas
 ax.plot(t, (1500 - 2 * t) / 3., color='red', lw=2.0)

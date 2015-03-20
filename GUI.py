@@ -1,15 +1,17 @@
+import math
+
 import Graficador
 import PL
 from Parser.Parser_PL import ParserPLG
 from Parser.PosParser import Posparser
 from Parser.PreParser import Preparser
 
+
 __author__ = 'José Pablo Parajeles'
 
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showwarning, showerror
-import Tools
 
 
 class Application(tk.Frame):
@@ -50,17 +52,17 @@ class Application(tk.Frame):
     def load(self):
         self.file = askopenfilename()
         pre = Preparser(self.file)
-        self.FileNameName["text"]=self.file
-        if(not pre.pl()):
+        self.FileNameName["text"] = self.file
+        if (not pre.pl()):
             showerror(self, "Error al abrir el archivo")
-        if len(pre.errors)>0:
+        if len(pre.errors) > 0:
             msj_1 = "\n".join(pre.errors)
             showwarning(self, "Error en las siguientes restricciones:\n {}".format(msj_1))
         self.TextF.insert("1.0", pre.text)
 
     def _metodo_grafico(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
-        if text_f_get[-1]=="\n":
+        if text_f_get[-1] == "\n":
             showerror("Error", "Retire todos los saltos de linea al final inecesarios")
             return
         parser = ParserPLG()
@@ -85,8 +87,8 @@ class Application(tk.Frame):
         objetivo = pos.funcion_objetivo
         DataGraficar = PL.getDatosPL(origin, restric, objetivo)
         puntos = DataGraficar[0]
-        max_x = int(DataGraficar[1] * 1.10)
-        max_y = int(DataGraficar[2] * 1.10)
+        max_x = int(math.ceil(DataGraficar[1] * 1.10))
+        max_y = int(math.ceil(DataGraficar[2] * 1.10))
 
         po = PL.getPtosOptimos(puntos, objetivo, 1);
 

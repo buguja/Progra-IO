@@ -28,7 +28,7 @@ def findXY(ecua):
         return 0
 
 
-#retorna el numero de una ecuacion x>=2 return 2
+# retorna el numero de una ecuacion x>=2 return 2
 def findInt(ecua):
     return int(re.findall(r'\d+', ecua)[0])
 

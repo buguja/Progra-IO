@@ -39,7 +39,7 @@ class Posparser:
                 current.append(")")
             restric.append("".join(current))
             defaults.append("".join(origin))
-        self._restricciones = restric + ["x>=0","y>=0"]
+        self._restricciones = restric
         self._inequations = defaults
 
     def fo_reformat(self):

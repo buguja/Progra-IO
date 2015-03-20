@@ -13,7 +13,7 @@ def getDatosPL(originals, restricciones, FO):
     puntosArea = todospuntos[1]  # guarda los puntos de dichas rectas
 
     puntosArea = (
-    calcularPuntosInterseccion(rectas, puntosArea))  # se le agregar los puntos de intersecciones de rectas
+        calcularPuntosInterseccion(rectas, puntosArea))  # se le agregar los puntos de intersecciones de rectas
     puntosSol = puntosSolucion(puntosArea, originals)
     print(puntosSol)
 
@@ -86,17 +86,17 @@ def calcularPuntosEjes(ecuaciones):
             puntos.append(form1.pto2)
         else:
             entero = findInt(i)
-            if xy == 1:  #inecuacion sin y
+            if xy == 1:  # inecuacion sin y
                 form1.pto1 = (entero, 0)
                 form1.pto2 = (entero, 1)
                 puntos.append(form1.pto1)
 
-            if xy == 2:  #inecucion sin x
+            if xy == 2:  # inecucion sin x
                 form1.pto1 = (0, entero)
                 form1.pto2 = (1, entero)
                 puntos.append(form1.pto1)
 
-        if entero != 0:  #esta condicion es para no volver a meter los ejes x>=0 y>=0
+        if entero != 0:  # esta condicion es para no volver a meter los ejes x>=0 y>=0
             rectas.append(form1)
 
     return [rectas, puntos]
@@ -119,7 +119,7 @@ def puntosSolucion(puntos, restricciones):
     for p in puntos:
         x = p[0]
         y = p[1]
-        contador = 0  #cuenta cuantas restricciones cumple
+        contador = 0  # cuenta cuantas restricciones cumple
         for ec in restricciones:
             if eval(ec):
                 contador += 1
@@ -138,7 +138,7 @@ def sortPointsPolygon(pp):
     return pp
 
 
-def getMaxXY(puntos):  #retorna losvalores maximos para poder dibujar bien cada eje
+def getMaxXY(puntos):  # retorna los valores maximos para poder dibujar bien cada eje
     max_x = 0
     max_y = 0
     for i in puntos:
@@ -151,7 +151,7 @@ def getMaxXY(puntos):  #retorna losvalores maximos para poder dibujar bien cada 
     return [max_x, max_y]
 
 
-def getPtosOptimos(puntos, FO, determin):  #determin 1 Max 0 para Min
+def getPtosOptimos(puntos, FO, determin):  # determin 1 Max 0 para Min
 
     ptosOptimos = []
     x = puntos[0][0]

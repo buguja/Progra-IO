@@ -14,7 +14,7 @@ def despejar(f, var):
 
 def dibujar(puntos, ptosOptimos, valorOptimo, equations, originals, lenght_x, lenght_y):
     # lenght_x=20
-    #lenght_y=20
+    # lenght_y=20
     area = plt.Polygon(puntos, closed=True, alpha=0.5)
     ax = plt.gca()
     ax.cla()
@@ -26,7 +26,6 @@ def dibujar(puntos, ptosOptimos, valorOptimo, equations, originals, lenght_x, le
     fig.gca().add_artist(area)
 
     x = np.linspace(0, lenght_x)
-    print(lenght_y)
 
     for eq in equations:
         xy = findXY(eq)
