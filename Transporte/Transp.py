@@ -36,7 +36,9 @@ def contarCeros(matriz):
 
     return celdas
 
-#
+#entrada:matriz
+#salida:arreglo [[filas marcadas][columnas marcadas]]
+#ojo esta a veces si marca toda la matriz, pero creo q solo lo hace cuando ya funca
 def marcarLineas(matriz):
     arregloCerosContados=contarCeros(matriz)
     filasMarcadas=[]
@@ -91,9 +93,6 @@ def printCeldas(items):
         val.printCeldas()
 
 
-
-#marcarLineas([[0,6,1,0],[5,0,0,7],[5,0,0,7],[0,1,5,5]])
-
 #resta todas las filas su menor elemento respectivamente
 def menorFila(matriz):
     largo=len(matriz)
@@ -141,19 +140,56 @@ def findMenor(matriz,celdasMarcadas):
                     if(val<menor):menor=val
     return menor
 
+#entrada:celdas con los 0's contados
+#salida:
+def getFilas(celdas):
+    arregloFilas=[]
+    for i,val in enumerate(celdas):
+        if(val.orientacion=='fila'):
+            arregloFilas.append([val.posicion,val.posicionCeros])
+    arregloFilas.sort()
+    arregloFilasFinal=[]
+    for j,val2 in enumerate(arregloFilas):#les quita la posicion de para solo retornas las filas
+        arregloFilasFinal.append(val2[1])
+    return arregloFilasFinal
+
+#entrada:matriz final
+#salida:arreglo con las posiciones de los 0's que si son solucion
+def getSoluciones(matriz):
+    return getSolucionesAux(matriz,[],[])
+def getSolucionesAux(items,solucionTotal,solucionParcial):
+    if (items==[]):
+        return [solucionParcial]
+    for i,posiciones in enumerate(items[0]):
+            if posiciones in solucionParcial:
+                continue
+            else:
+                solucionTotal.extend(getSolucionesAux(items[1:],[],solucionParcial+[posiciones]))
+    return solucionTotal
+
+
+
+def problemaDistribucion(matrizCostos):
+    p1=menorColumna(menorFila(matrizCostos))#resta el menor de cada fila y el de cada columna
+    p2=marcarLineas(p1)#marca la lineas
+    while(len(p2[0])+len(p2[1])<len(matrizCostos)):#mientas no se hayan hecho suficientes marcas
+        p3=operaMenor(p1,p2)#resta a todos los no marcados el menor, y a la interseccion se lo suma
+        p2=marcarLineas(p3)#vuelve a marcar lineas
+
+    filasCeros=getFilas(contarCeros(p3))#arreglo con las posiciones donde estan los 0's en cada fila
+    print(getSoluciones(filasCeros))
 
 
 
 
-a=menorColumna(menorFila([[10,9,5],[9,8,3],[6,4,7]]))
-b=marcarLineas(a)
-print(operaMenor(a,b))
+problemaDistribucion([[10,9,5],[9,8,3],[6,4,7]])
 
 
 
-
-
-
+#a=menorColumna(menorFila([[10,9,5],[9,8,3],[6,4,7]]))
+#b=marcarLineas(a)
+#printCeldas(contarCeros(operaMenor(a,b)))
+#print(getSoluciones([[0,1],[0,2],[2]]))
 
 
 
