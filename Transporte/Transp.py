@@ -1,4 +1,5 @@
 import sys
+from copy import deepcopy
 __author__ = 'luisdiegopizarro'
 
 #se va considerar una celda como todo un conjunto de celas llamese una fila o una columna
@@ -94,17 +95,18 @@ def printCeldas(items):
 
 
 #resta todas las filas su menor elemento respectivamente
-def menorFila(matriz):
+def menorFila(matrizOriginal):
+    matriz=deepcopy(matrizOriginal)
     largo=len(matriz)
     for f in range(0,largo):
         menor=matriz[f][0]
         for c in range(0,largo):
             if(matriz[f][c]<menor):menor=matriz[f][c]
         for r in range(0,largo):matriz[f][r]=matriz[f][r]-menor
-
     return matriz
 #resta a todas las columnas su menor elemento respectivamente
-def menorColumna(matriz):
+def menorColumna(matrizOriginal):
+    matriz=deepcopy(matrizOriginal)
     largo=len(matriz)
     for c in range(0,largo):
         menor=matriz[0][c]
@@ -116,7 +118,8 @@ def menorColumna(matriz):
 
 #resta el menor valor no marcado, a todos los valores NO marcados
 #se lo suma a los valores que esten en las intersecciones
-def operaMenor(matriz,celdasMarcadas):
+def operaMenor(matrizOriginal,celdasMarcadas):
+    matriz=deepcopy(matrizOriginal)
     filas=celdasMarcadas[0]
     columnas=celdasMarcadas[1]
     menor=findMenor(matriz,celdasMarcadas)
@@ -153,10 +156,10 @@ def getFilas(celdas):
         arregloFilasFinal.append(val2[1])
     return arregloFilasFinal
 
-#entrada:matriz final
+#entrada:filas con las posicion de sus 0's
 #salida:arreglo con las posiciones de los 0's que si son solucion
-def getSoluciones(matriz):
-    return getSolucionesAux(matriz,[],[])
+def getSoluciones(filas):
+    return getSolucionesAux(filas,[],[])
 def getSolucionesAux(items,solucionTotal,solucionParcial):
     if (items==[]):
         return [solucionParcial]
@@ -167,29 +170,79 @@ def getSolucionesAux(items,solucionTotal,solucionParcial):
                 solucionTotal.extend(getSolucionesAux(items[1:],[],solucionParcial+[posiciones]))
     return solucionTotal
 
+class Solucion:
+    def __init__(self,valor,elementos):
+        self.valor=valor
+        self.elementos=elementos
+
+def evaluar(matrizCostos,soluciones):
+    for i,sol in enumerate(soluciones):
+        totalParcial=0
+        totalSolucion=sys.maxsize
+        arregloSolucion=[]
+        for j,val in enumerate(sol):
+            totalParcial+=matrizCostos[j][val]
+        if(totalParcial<totalSolucion):
+            totalSolucion=totalParcial
+            arregloSolucion=sol
+    return Solucion(totalSolucion,arregloSolucion)
+
+def printSolucion(solucion,atiende):
+    contador=1
+    for i in range(0,len(solucion.elementos)):
+            print("El proveedor "+str(contador)+" atiende a "+str(solucion.elementos[i]+1))
+            atiende[0]-=1
+            if(atiende[0]==0):
+                contador+=1
+                atiende=atiende[1:]
+
+    print("Tiene un costo total de "+str(solucion.valor))
+
+#entrada:matriz original, solo se corre cuando el proceso es de maximizar
+#salida:matriz con la fomra Mayor-entradas
+def setMatrizMax(matrizOriginal):
+    matriz=deepcopy(matrizOriginal)
+    mayor=0
+    for i,f in enumerate(matriz):
+        for j,c in enumerate(f):
+            if(c>mayor):mayor=c
+    for x,f1 in enumerate(matriz):
+        for y,c1 in enumerate(f):
+            matriz[x][y]=mayor-matriz[x][y]
+    return matriz
+
+#en caso de que un proveedor pueda atender varias, se va a expandir la matriz de costos para que quede de nxn
+def expandirCostos(matriz,atiende):
+    nueva=[]
+    for i,val in enumerate(atiende):
+        for j in range(0,val):
+            nueva.append(deepcopy(matriz[i]))
+    return nueva
 
 
-def problemaDistribucion(matrizCostos):
+#tipo 0 minimizar 1 maximizar
+#atiende: arreglo con la cantidad que atiende cada proveedor
+def problemaDistribucion(matrizCostos,tipo,atiende):
+    matrizCostos=expandirCostos(matrizCostos,atiende)
+    costos=matrizCostos
+
+    if(tipo):
+        matrizCostos=setMatrizMax(matrizCostos)
     p1=menorColumna(menorFila(matrizCostos))#resta el menor de cada fila y el de cada columna
     p2=marcarLineas(p1)#marca la lineas
+    p3=p1
     while(len(p2[0])+len(p2[1])<len(matrizCostos)):#mientas no se hayan hecho suficientes marcas
         p3=operaMenor(p1,p2)#resta a todos los no marcados el menor, y a la interseccion se lo suma
         p2=marcarLineas(p3)#vuelve a marcar lineas
-
     filasCeros=getFilas(contarCeros(p3))#arreglo con las posiciones donde estan los 0's en cada fila
-    print(getSoluciones(filasCeros))
+    soluciones=getSoluciones(filasCeros)
+    printSolucion(evaluar(costos,soluciones),atiende)
 
 
+problemaDistribucion([[10,9,5],[9,8,3],[6,4,7]],0,[1,1,1])
+problemaDistribucion([[13,7,12,12],[10,13,15,7],[13,10,8,7]],1,[1,2,1])
 
 
-problemaDistribucion([[10,9,5],[9,8,3],[6,4,7]])
-
-
-
-#a=menorColumna(menorFila([[10,9,5],[9,8,3],[6,4,7]]))
-#b=marcarLineas(a)
-#printCeldas(contarCeros(operaMenor(a,b)))
-#print(getSoluciones([[0,1],[0,2],[2]]))
 
 
 
