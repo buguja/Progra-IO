@@ -239,9 +239,10 @@ def problemaDistribucion(matrizCostos,tipo,atiende):
     printSolucion(evaluar(costos,soluciones),atiende)
 
 
-problemaDistribucion([[10,9,5],[9,8,3],[6,4,7]],0,[1,1,1])
-problemaDistribucion([[13,7,12,12],[10,13,15,7],[13,10,8,7]],1,[1,2,1])
-
+#problemaDistribucion([[10,9,5],[9,8,3],[6,4,7]],0,[1,1,1])
+#problemaDistribucion([[13,7,12,12],[10,13,15,7],[13,10,8,7]],1,[1,2,1])
+#problemaDistribucion([[10,8,2],[3,9,3],[4,10,5]],0,[1,1,1])
+problemaDistribucion([[15,10,9],[9,15,10],[10,12,8]],0,[1,1,1])
 
 
 
