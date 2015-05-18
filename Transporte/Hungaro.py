@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 from copy import deepcopy
 __author__ = 'luisdiegopizarro'
 
@@ -175,28 +176,40 @@ class Solucion:
         self.valor=valor
         self.elementos=elementos
 
-def evaluar(matrizCostos,soluciones):
+def evaluar(matrizCostos,soluciones,tipo):
+    respuesta=[]
+    if(tipo):
+        f=lambda x,y:x>y
+        totalSolucion=0
+    else:
+        f=lambda x,y:x<y
+        totalSolucion=sys.maxsize
+
     for i,sol in enumerate(soluciones):
         totalParcial=0
-        totalSolucion=sys.maxsize
-        arregloSolucion=[]
         for j,val in enumerate(sol):
             totalParcial+=matrizCostos[j][val]
-        if(totalParcial<totalSolucion):
+        if(totalParcial==totalSolucion):
+            respuesta.append(Solucion(totalSolucion,sol))
+
+        elif(f(totalParcial,totalSolucion)):
             totalSolucion=totalParcial
-            arregloSolucion=sol
-    return Solucion(totalSolucion,arregloSolucion)
+            respuesta=[]
+            respuesta.append(Solucion(totalSolucion,sol))
+    return respuesta
 
-def printSolucion(solucion,atiende):
-    contador=1
-    for i in range(0,len(solucion.elementos)):
-            print("El proveedor "+str(contador)+" atiende a "+str(solucion.elementos[i]+1))
-            atiende[0]-=1
-            if(atiende[0]==0):
-                contador+=1
-                atiende=atiende[1:]
+def printSolucion(respuestas,pAtiende):
+    for j,solucion in enumerate(respuestas):
+        contador=1
+        atiende=deepcopy(pAtiende)
+        for i in range(0,len(solucion.elementos)):
+                print("El proveedor "+str(contador)+" atiende a "+str(solucion.elementos[i]+1))
+                atiende[0]-=1
+                if(atiende[0]==0):
+                    contador+=1
+                    atiende=atiende[1:]
 
-    print("Tiene un costo total de "+str(solucion.valor))
+        print("Tiene un costo total de "+str(solucion.valor)+"\n")
 
 #entrada:matriz original, solo se corre cuando el proceso es de maximizar
 #salida:matriz con la fomra Mayor-entradas
@@ -219,10 +232,32 @@ def expandirCostos(matriz,atiende):
             nueva.append(deepcopy(matriz[i]))
     return nueva
 
+def eliminaRepetidos(soluciones,atiende):#en caso de que hayan que atienden varios, se eliminan las opciones repetidas
+    if(atiende==[1]*len(atiende)):#si solo atiende 1 cada proovedor no pasa nada
+        return soluciones
+    op=[]
+    largo=len(atiende)
+
+    for i,val1 in enumerate(soluciones):
+        d=True
+        for j,val2 in enumerate(soluciones[1:]):
+            conta=0
+            igual=0
+            for z,cant in enumerate(atiende):
+                if(set(val1[conta:conta+cant])==set(val2[conta:conta+cant])):
+                    igual+=1
+                    conta+=cant
+            if(igual==largo):
+                d=False
+                break
+        soluciones=soluciones[1:]
+        if(d):
+            op.append(val1)
+    return op
 
 #tipo 0 minimizar 1 maximizar
 #atiende: arreglo con la cantidad que atiende cada proveedor
-def problemaDistribucion(matrizCostos,tipo,atiende):
+def hungaro(matrizCostos,tipo,atiende):
     matrizCostos=expandirCostos(matrizCostos,atiende)
     costos=matrizCostos
 
@@ -235,12 +270,14 @@ def problemaDistribucion(matrizCostos,tipo,atiende):
         p3=operaMenor(p1,p2)#resta a todos los no marcados el menor, y a la interseccion se lo suma
         p2=marcarLineas(p3)#vuelve a marcar lineas
     filasCeros=getFilas(contarCeros(p3))#arreglo con las posiciones donde estan los 0's en cada fila
-    soluciones=getSoluciones(filasCeros)
-    printSolucion(evaluar(costos,soluciones),atiende)
+    soluciones=eliminaRepetidos(getSoluciones(filasCeros),atiende)
+    printSolucion(evaluar(costos,soluciones,tipo),atiende)
 
 
-problemaDistribucion([[10,9,5],[9,8,3],[6,4,7]],0,[1,1,1])
-problemaDistribucion([[13,7,12,12],[10,13,15,7],[13,10,8,7]],1,[1,2,1])
+#hungaro([[10,9,5],[9,8,3],[6,4,7]],0,[1,1,1])
+#hungaro([[13,7,12,12],[10,13,15,7],[13,10,8,7]],1,[1,2,1])
+#hungaro([[10,8,2],[3,9,3],[4,10,5]],0,[1,1,1])#tiene 3 soluciones
+#hungaro([[15,10,9],[9,15,10],[10,12,8]],0,[1,1,1])
 
 
 
