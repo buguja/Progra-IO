@@ -63,12 +63,23 @@ class SimplexCore:
     def local_sub(self, index_pivote_c):
         return self.decision if index_pivote_c < self.heigth else self.holgura
 
-    def UpdatePivote(self, index_x, index_y):
-        pass
+    def map_pivote(self, lista, pivote):
+        return list(map((lambda x:x/pivote),lista))
+
+    def update_pivote(self, index_x, index_y):
+        # Usar (Descicion o Holgura)
+        submatrix = self.local_sub(index_y)
+        index_y_local = self.local_index(index_y)
+        pivote = submatrix[index_x][index_y_local]
+        self.base[index_x] = "{}{}".format("x" if index_y == index_y_local else "h",index_y_local)
+        self.decision[index_x]  = self.map_pivote(self.decision[index_x],pivote)
+        self.holgura[index_x]  = self.map_pivote(self.holgura[index_x],pivote)
+        self.val_sol /= pivote
 
     def SimplexIterate(self):
         var_in = self.getIndex()  # simplex[][i]
         var_out = self.getOut(var_in)  # simples[i][]
+        self.update_pivote(var_out, var_in)
 
     def SimplexStart(self):
         for var_d in self.decision:
