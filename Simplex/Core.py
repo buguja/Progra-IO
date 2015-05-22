@@ -105,6 +105,9 @@ class SimplexCore:
             self.val_sol[fila] = self.val_sol[fila]- (pivote_vs *pivore_columna)
 
 
+    def chechSol(self):
+        pass # si min entonces no (+); si max no (-) => bool
+
 
     def SimplexIterate(self):
         var_in = self.getIndex()  # simplex[][i]
@@ -112,7 +115,7 @@ class SimplexCore:
         self.update_pivote(var_out, var_in) #pivote
         self.update_resto(var_out, var_in) # resto
         print(self)
-        return self
+        return self if self.chechSol() else self.SimplexIterate()
 
     def SimplexStart(self):
         for var_d in self.decision:
