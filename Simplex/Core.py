@@ -49,7 +49,7 @@ class SimplexCore:
             # dividir ValSol / columna pivote
             list_div = [self.val_sol[i] / pivote_c[i] for i in range(0, len(self.base))]
             # obtener el minimo
-            minimum = min(list_div)
+            minimum = min([positive for positive in list_div if positive>0])
             # dejar el indece del min en empateList
             self.empateList = [o for o, val in enumerate(list_div) if val == minimum]
         # set Flag de empate si hay mas de 1 elemento en la lista
