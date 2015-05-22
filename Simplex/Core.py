@@ -64,22 +64,55 @@ class SimplexCore:
         return self.decision if index_pivote_c < self.heigth else self.holgura
 
     def map_pivote(self, lista, pivote):
+        # para cada elemento de la lista dividalo entre el pivote
         return list(map((lambda x:x/pivote),lista))
 
     def update_pivote(self, index_x, index_y):
         # Usar (Descicion o Holgura)
         submatrix = self.local_sub(index_y)
         index_y_local = self.local_index(index_y)
+        # obtener pivote operacional
         pivote = submatrix[index_x][index_y_local]
+        # actualizar la base
         self.base[index_x] = "{}{}".format("x" if index_y == index_y_local else "h",index_y_local)
+        # actualizar la submatriz de desicion
         self.decision[index_x]  = self.map_pivote(self.decision[index_x],pivote)
+        # actualizar la submatriz de holgura
         self.holgura[index_x]  = self.map_pivote(self.holgura[index_x],pivote)
+        # actualizar el val solucion
         self.val_sol /= pivote
+
+    def map_otras(self, sub, fpivote, pivoteCol):
+        return [anterior - (pivoteCol * fpivote[pivote]) for anterior,pivote in enumerate(sub)]
+
+    def update_resto(self,index_x,index_y):
+        #fila pivote
+        pivote_d = self.decision[index_x]
+        pivote_h = self.holgura[index_x]
+        pivote_vs = self.val_sol[index_x]
+        # Usar (Descicion o Holgura)
+        submatrix = self.local_sub(index_y)
+        index_y_local = self.local_index(index_y)
+        for fila in range(0, self.heigth):
+            # valor de la columna pivote en la fila actual
+            pivore_columna = submatrix[fila][index_y_local]
+            # actualizar resto de la filas
+            # decision
+            self.decision[fila] = self.map_otras(self.decision[fila],pivote_d, pivore_columna)
+            # holgura
+            self.holgura[fila] = self.map_otras(self.holgura[fila],pivote_h, pivore_columna)
+            # val sol
+            self.val_sol[fila] = self.val_sol[fila]- (pivote_vs *pivore_columna)
+
+
 
     def SimplexIterate(self):
         var_in = self.getIndex()  # simplex[][i]
         var_out = self.getOut(var_in)  # simples[i][]
-        self.update_pivote(var_out, var_in)
+        self.update_pivote(var_out, var_in) #pivote
+        self.update_resto(var_out, var_in) # resto
+        print(self)
+        return self
 
     def SimplexStart(self):
         for var_d in self.decision:
