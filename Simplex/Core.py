@@ -22,6 +22,7 @@ class SimplexCore:
         # Flags
         self.empateFlag = False
         self.empateList = []
+        self.inlist = []
 
     def addRestricion(self, iBase, iDescicion, iHolgura, iSol):
         self.base.append(iBase)
@@ -111,6 +112,7 @@ class SimplexCore:
 
     def SimplexIterate(self):
         var_in = self.getIndex()  # simplex[][i]
+        self.inlist.append(var_in)
         var_out = self.getOut(var_in)  # simples[i][]
         self.update_pivote(var_out, var_in) #pivote
         self.update_resto(var_out, var_in) # resto
