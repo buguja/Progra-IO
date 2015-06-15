@@ -117,10 +117,14 @@ class SimplexCore:
 
     def update_pivote(self, index_x, index_y):
         # Usar (Descicion o Holgura)
-        submatrix = self.local_sub(index_y)
-        index_y_local = self.local_index(index_y)
+        local = self.localizar(index_y)
+        if type(local)==int:
+            return
+        submatrix = local[0]
+        index_pivote_c_1 = local[1]
         # obtener pivote operacional
-        pivote = submatrix[index_y_local][index_x]
+        pivote = submatrix[index_y][index_x]
+        index_y_local = local[1]
         # actualizar la base
         self.base[index_x] = "{}{}".format("x" if index_y == index_y_local else "h", index_y_local)
         # actualizar la submatriz de desicion
@@ -143,9 +147,15 @@ class SimplexCore:
         pivote_d = [col[index_x] for col in self.decision]
         pivote_h = [col[index_x] for col in self.holgura]
         pivote_vs = self.val_sol[index_x]
-        # Usar (Descicion o Holgura)
-        submatrix = self.local_sub(index_y)
-        index_y_local = self.local_index(index_y)
+        # Usar submatrix correcta
+        local = self.localizar(index_y)
+        if type(local)==int:
+            return
+        submatrix = local[0]
+        index_pivote_c_1 = local[1]
+        # obtener pivote operacional
+        pivote = submatrix[index_y][index_x]
+        index_y_local = local[1]
         for fila in range(0, self.heigth):
             #No actualizar la pivote
             if(fila == index_x):

@@ -17,10 +17,10 @@ test.addRestricion("f",[4,1],[0,1,0],8)
 test.addRestricion("g",[4,-1],[0,0,1],8)
 test.addRestricion("x",[-2,-1],[0,0,0],0)
 """
-test = SimplexCore(2,2,mtype.Max)
-test.addRestricion("f",[2,7],[1,0],21)
-test.addRestricion("g",[7,2],[0,1],21)
-test.addRestricion("z",[-4,-14],[0,0],0)
+test = SimplexCore(2,2,0,0,mtype.Max)
+test.addRestricion("f",[2,7],[1,0],[],[],21)
+test.addRestricion("g",[7,2],[0,1],[],[],21)
+test.addRestricion("z",[-4,-14],[0,0],[],[],0)
 
 
 print(test);
