@@ -5,19 +5,27 @@ from  Simplex.Core import SimplexCore
 from decimal import *
 """
 test = SimplexCore(2,3,mtype.Max)
-test.addRestricion("h",[Decimal( 2), Decimal(1)],[Decimal(1),Decimal(0),Decimal(0)],Decimal(18))
-test.addRestricion("s",[Decimal( 3), Decimal(2)],[Decimal(0),Decimal(1),Decimal(0)],Decimal(42))
-test.addRestricion("d",[Decimal( 3), Decimal(1)],[Decimal(0),Decimal(0),Decimal(1)],Decimal(24))
-test.addRestricion("z",[Decimal(-3), Decimal(-2)],[Decimal(0),Decimal(0),Decimal(0)],Decimal(0))
-"""
-test = SimplexCore(2,3,mtype.Max)
 test.addRestricion("h",[ 2,1],[1,0,0],18)
 test.addRestricion("s",[ 2,3],[0,1,0],42)
 test.addRestricion("d",[ 3,1],[0,0,1],24)
 test.addRestricion("z",[-3,-2],[0,0,0],0)
+"""
+"""
+test = SimplexCore(2,3,mtype.Max)
+test.addRestricion("d",[4,3],[1,0,0],12)
+test.addRestricion("f",[4,1],[0,1,0],8)
+test.addRestricion("g",[4,-1],[0,0,1],8)
+test.addRestricion("x",[-2,-1],[0,0,0],0)
+"""
+test = SimplexCore(2,2,mtype.Max)
+test.addRestricion("f",[2,7],[1,0],21)
+test.addRestricion("g",[7,2],[0,1],21)
+test.addRestricion("z",[-4,-14],[0,0],0)
+
 
 print(test);
 
 test.SimplexStart();
 
 print(test);
+print(test.Solucion)

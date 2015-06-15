@@ -50,6 +50,8 @@ class SimplexCore:
         # Obtener la columna
         pivote_c = submatrix[index_pivote_c_1]
         # si no hay empate en el paso pasado
+        if self.empateFlag:
+            self.Solucion = "Degenerado"
         if not self.empateFlag:
             # dividir ValSol / columna pivote
             list_div = [special_div(self.val_sol[i] , pivote_c[i]) for i in range(0, len(self.base))]
@@ -117,14 +119,15 @@ class SimplexCore:
 
     def chechSol(self):
         # Hay 0 (+|-) segun el metodo
-        if (len([elem for elem in (self.decision[-1] + self.holgura[-1]) if self.stop(elem)]) > 0):
+        if (len([elem for elem in ([col[-1] for col in self.decision] + [col[-1] for col in self.holgura]) if self.stop(elem)]) > 0):
             # Hay almenos 1, iterar una vez más
             return False
         # Revisar por el degenerado
-        diff = list(set(range(0, len([zero for zero in self.decision if zero == 0]))) - set(self.inlist))
+        diff = list(set(range(0, len([zero[-1] for zero in self.decision if zero[-1] == 0]))) - set(self.inlist))
         # Hay 0 de diff
         if (len(diff) > 0):
-            # Caso degenerado
+            # Caso Multiple
+            self.Solucion = "Multiple"
             self.multipleFlag = diff
             return False
         # end
@@ -163,10 +166,6 @@ class SimplexCore:
         heads = ["x{}".format(d) for d in range(0, len_d)] + ["h{}".format(d) for d in range(0, len_h)] + ["Val Sol"]
         quantity = 1 + 1 + len_d + len_h
         head = head_m(quantity).format("Base", *heads, width=width)
-        # matrix = [head_m(quantity).format([[self.base[ii]]
-        #                                   + [d_ij[ii] for d_ij in self.decision]
-        #                                  + [d_jj[ii] for d_jj in self.holgura]
-        #                                   + [self.val_sol[ii]] for ii in range(0,self.heigth-1)], width=width)]
         matrix = [head_m(quantity).format(str(self.base[ii]),
                                           *([str(d_ij[ii]) for d_ij in self.decision]
                                            + [str(d_jj[ii]) for d_jj in self.holgura]
