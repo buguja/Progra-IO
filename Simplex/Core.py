@@ -1,8 +1,6 @@
-from Simplex.printing import list_str_w, matrix_str_w, head_m
-
 __author__ = 'José Pablo'
 from Enums import mtype
-
+from Simplex.printing import list_str_w, matrix_str_w, head_m
 
 class SimplexCore:
     def __init__(self, qDescicion, qHolgura, qDir=mtype.Min):
@@ -17,12 +15,14 @@ class SimplexCore:
         self.Solucion = ""
         # Funcion
         self.find = max if qDir == mtype.Max else min
+        self.stop = lambda x: x < 0 if qDir == mtype.Max else lambda x: x > 0
 
         self.heigth = 0
         # Flags
         self.empateFlag = False
         self.empateList = []
         self.inlist = []
+        self.multipleFlag = []
 
     def addRestricion(self, iBase, iDescicion, iHolgura, iSol):
         self.base.append(iBase)
@@ -33,7 +33,7 @@ class SimplexCore:
         self.val_sol.append(iSol)
         self.heigth += 1
 
-    def getIndex(self):
+    def getIn(self):
         # encuentra el valor de el min/max entre descion y holgura
         value = self.find(self.decision[-1] + self.holgura[-1])
         # retorna el index
@@ -50,7 +50,7 @@ class SimplexCore:
             # dividir ValSol / columna pivote
             list_div = [self.val_sol[i] / pivote_c[i] for i in range(0, len(self.base))]
             # obtener el minimo
-            minimum = min([positive for positive in list_div if positive>0])
+            minimum = min([positive for positive in list_div if positive > 0])
             # dejar el indece del min en empateList
             self.empateList = [o for o, val in enumerate(list_div) if val == minimum]
         # set Flag de empate si hay mas de 1 elemento en la lista
@@ -66,7 +66,7 @@ class SimplexCore:
 
     def map_pivote(self, lista, pivote):
         # para cada elemento de la lista dividalo entre el pivote
-        return list(map((lambda x:x/pivote),lista))
+        return list(map((lambda x: x / pivote), lista))
 
     def update_pivote(self, index_x, index_y):
         # Usar (Descicion o Holgura)
@@ -75,19 +75,19 @@ class SimplexCore:
         # obtener pivote operacional
         pivote = submatrix[index_x][index_y_local]
         # actualizar la base
-        self.base[index_x] = "{}{}".format("x" if index_y == index_y_local else "h",index_y_local)
+        self.base[index_x] = "{}{}".format("x" if index_y == index_y_local else "h", index_y_local)
         # actualizar la submatriz de desicion
-        self.decision[index_x]  = self.map_pivote(self.decision[index_x],pivote)
+        self.decision[index_x] = self.map_pivote(self.decision[index_x], pivote)
         # actualizar la submatriz de holgura
-        self.holgura[index_x]  = self.map_pivote(self.holgura[index_x],pivote)
+        self.holgura[index_x] = self.map_pivote(self.holgura[index_x], pivote)
         # actualizar el val solucion
         self.val_sol /= pivote
 
     def map_otras(self, sub, fpivote, pivoteCol):
-        return [anterior - (pivoteCol * fpivote[pivote]) for anterior,pivote in enumerate(sub)]
+        return [anterior - (pivoteCol * fpivote[pivote]) for anterior, pivote in enumerate(sub)]
 
-    def update_resto(self,index_x,index_y):
-        #fila pivote
+    def update_resto(self, index_x, index_y):
+        # fila pivote
         pivote_d = self.decision[index_x]
         pivote_h = self.holgura[index_x]
         pivote_vs = self.val_sol[index_x]
@@ -99,23 +99,38 @@ class SimplexCore:
             pivore_columna = submatrix[fila][index_y_local]
             # actualizar resto de la filas
             # decision
-            self.decision[fila] = self.map_otras(self.decision[fila],pivote_d, pivore_columna)
+            self.decision[fila] = self.map_otras(self.decision[fila], pivote_d, pivore_columna)
             # holgura
-            self.holgura[fila] = self.map_otras(self.holgura[fila],pivote_h, pivore_columna)
+            self.holgura[fila] = self.map_otras(self.holgura[fila], pivote_h, pivore_columna)
             # val sol
-            self.val_sol[fila] = self.val_sol[fila]- (pivote_vs *pivore_columna)
-
+            self.val_sol[fila] = self.val_sol[fila] - (pivote_vs * pivore_columna)
 
     def chechSol(self):
-        pass # si min entonces no (+); si max no (-) => bool
-
+        # Hay 0 (+|-) segun el metodo
+        if (len([elem for elem in (self.decision[-1] + self.holgura[-1]) if self.stop(elem)]) > 0):
+            # Hay almenos 1, iterar una vez más
+            return False
+        # Revisar por el degenerado
+        diff = list(set(range(0, len([zero for zero in self.decision if zero == 0])) - set(self.inlist)))
+        # Hay 0 de diff
+        if (len(diff) > 0):
+            # Caso degenerado
+            self.multipleFlag = diff
+            return False
+        # end
+        return True
 
     def SimplexIterate(self):
-        var_in = self.getIndex()  # simplex[][i]
+        # simplex[][i]
+        var_in = self.getIn() if len(self.multipleFlag) == 0 else self.multipleFlag.pop(0)
+        # Ya se uso
         self.inlist.append(var_in)
-        var_out = self.getOut(var_in)  # simples[i][]
-        self.update_pivote(var_out, var_in) #pivote
-        self.update_resto(var_out, var_in) # resto
+        # simples[i][]
+        var_out = self.getOut(var_in)
+        # pivote
+        self.update_pivote(var_out, var_in)
+        # resto
+        self.update_resto(var_out, var_in)
         print(self)
         return self if self.chechSol() else self.SimplexIterate()
 
