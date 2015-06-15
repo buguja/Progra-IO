@@ -5,7 +5,7 @@ from Tools import special_div
 from Simplex.printing import list_str_w, matrix_str_w, head_m
 
 class SimplexCore:
-    def __init__(self, qDescicion, qHolgura, qArtificial=0, qSuperhabit=0, qDir=mtype.Min):
+    def __init__(self, qDescicion, qHolgura, qArtificial, qSuperhabit, qDir):
         #Matrix
         # Base
         self.base = []
@@ -115,6 +115,16 @@ class SimplexCore:
         for col in matrix:
             col[index] /= pivote
 
+    def map_letter(self, sub):
+        if sub == self.decision:
+            return "x"
+        if sub == self.holgura:
+            return "h"
+        if sub == self.superhabit:
+            return "s"
+        if sub == self.artificial:
+            return "a"
+
     def update_pivote(self, index_x, index_y):
         # Usar (Descicion o Holgura)
         local = self.localizar(index_y)
@@ -126,7 +136,7 @@ class SimplexCore:
         pivote = submatrix[index_y][index_x]
         index_y_local = local[1]
         # actualizar la base
-        self.base[index_x] = "{}{}".format("x" if index_y == index_y_local else "h", index_y_local)
+        self.base[index_x] = "{}{}".format(self.map_letter(submatrix),index_y_local)
         # actualizar la submatriz de desicion
         self.map_pivote(self.decision, pivote,index_x)
         # actualizar la submatriz de holgura
