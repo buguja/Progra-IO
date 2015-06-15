@@ -1,3 +1,5 @@
+from Tools import special_div
+
 __author__ = 'José Pablo'
 from Enums import mtype
 from Simplex.printing import list_str_w, matrix_str_w, head_m
@@ -14,7 +16,7 @@ class SimplexCore:
         self.val_sol = []
         self.Solucion = ""
         # Funcion
-        self.find = max if qDir == mtype.Max else min
+        self.find = min if qDir == mtype.Max else max
         self.stop = lambda x: x < 0 if qDir == mtype.Max else lambda x: x > 0
 
         self.heigth = 0
@@ -29,26 +31,28 @@ class SimplexCore:
         for i in range(0, len(iDescicion)):
             self.decision[i].append(iDescicion[i])
         for j in range(0, len(iHolgura)):
-            self.holgura[i].append(iHolgura[i])
+            self.holgura[j].append(iHolgura[j])
         self.val_sol.append(iSol)
         self.heigth += 1
 
     def getIn(self):
         # encuentra el valor de el min/max entre descion y holgura
-        value = self.find(self.decision[-1] + self.holgura[-1])
+        last_row = [col[-1] for col in self.decision] + [col[-1] for col in self.holgura]
+        value = self.find(last_row)
         # retorna el index
-        return (self.decision[-1] + self.holgura[-1]).index(value)
+        return last_row.index(value)
+
 
     def getOut(self, index_pivote_c):
         # Usar (Descicion o Holgura)
         submatrix = self.local_sub(index_pivote_c)
         index_pivote_c_1 = self.local_index(index_pivote_c)
         # Obtener la columna
-        pivote_c = [submatrix[i][index_pivote_c_1] for i in range(0, self.heigth)]
+        pivote_c = submatrix[index_pivote_c_1]
         # si no hay empate en el paso pasado
         if not self.empateFlag:
             # dividir ValSol / columna pivote
-            list_div = [self.val_sol[i] / pivote_c[i] for i in range(0, len(self.base))]
+            list_div = [special_div(self.val_sol[i] , pivote_c[i]) for i in range(0, len(self.base))]
             # obtener el minimo
             minimum = min([positive for positive in list_div if positive > 0])
             # dejar el indece del min en empateList
@@ -59,49 +63,55 @@ class SimplexCore:
         return self.empateList.pop(0)
 
     def local_index(self, index_pivote_c):
-        return index_pivote_c if index_pivote_c < self.heigth else index_pivote_c - self.heigth
+        leng = len(self.decision)
+        return index_pivote_c if index_pivote_c < leng else index_pivote_c - leng
 
     def local_sub(self, index_pivote_c):
-        return self.decision if index_pivote_c < self.heigth else self.holgura
+        return self.decision if index_pivote_c < len(self.decision) else self.holgura
 
-    def map_pivote(self, lista, pivote):
+    def map_pivote(self, matrix, pivote, index):
         # para cada elemento de la lista dividalo entre el pivote
-        return list(map((lambda x: x / pivote), lista))
+        for col in matrix:
+            col[index] /= pivote
 
     def update_pivote(self, index_x, index_y):
         # Usar (Descicion o Holgura)
         submatrix = self.local_sub(index_y)
         index_y_local = self.local_index(index_y)
         # obtener pivote operacional
-        pivote = submatrix[index_x][index_y_local]
+        pivote = submatrix[index_y_local][index_x]
         # actualizar la base
         self.base[index_x] = "{}{}".format("x" if index_y == index_y_local else "h", index_y_local)
         # actualizar la submatriz de desicion
-        self.decision[index_x] = self.map_pivote(self.decision[index_x], pivote)
+        self.map_pivote(self.decision, pivote,index_x)
         # actualizar la submatriz de holgura
-        self.holgura[index_x] = self.map_pivote(self.holgura[index_x], pivote)
+        self.map_pivote(self.holgura, pivote,index_x)
         # actualizar el val solucion
-        self.val_sol /= pivote
+        self.val_sol[index_x] /= pivote
 
-    def map_otras(self, sub, fpivote, pivoteCol):
-        return [anterior - (pivoteCol * fpivote[pivote]) for anterior, pivote in enumerate(sub)]
+    def map_otras(self, matrix, altura, fpivote, pivoteCol):
+        for index,col in enumerate(matrix):
+            col[altura] = col[altura]- (pivoteCol * fpivote[index])
 
     def update_resto(self, index_x, index_y):
         # fila pivote
-        pivote_d = self.decision[index_x]
-        pivote_h = self.holgura[index_x]
+        pivote_d = [col[index_x] for col in self.decision]
+        pivote_h = [col[index_x] for col in self.holgura]
         pivote_vs = self.val_sol[index_x]
         # Usar (Descicion o Holgura)
         submatrix = self.local_sub(index_y)
         index_y_local = self.local_index(index_y)
         for fila in range(0, self.heigth):
+            #No actualizar la pivote
+            if(fila == index_x):
+                continue
             # valor de la columna pivote en la fila actual
-            pivore_columna = submatrix[fila][index_y_local]
+            pivore_columna = submatrix[index_y_local][fila]
             # actualizar resto de la filas
             # decision
-            self.decision[fila] = self.map_otras(self.decision[fila], pivote_d, pivore_columna)
+            self.map_otras(self.decision,fila, pivote_d, pivore_columna)
             # holgura
-            self.holgura[fila] = self.map_otras(self.holgura[fila], pivote_h, pivore_columna)
+            self.map_otras(self.holgura, fila, pivote_h, pivore_columna)
             # val sol
             self.val_sol[fila] = self.val_sol[fila] - (pivote_vs * pivore_columna)
 
@@ -111,7 +121,7 @@ class SimplexCore:
             # Hay almenos 1, iterar una vez más
             return False
         # Revisar por el degenerado
-        diff = list(set(range(0, len([zero for zero in self.decision if zero == 0])) - set(self.inlist)))
+        diff = list(set(range(0, len([zero for zero in self.decision if zero == 0]))) - set(self.inlist))
         # Hay 0 de diff
         if (len(diff) > 0):
             # Caso degenerado
@@ -121,6 +131,7 @@ class SimplexCore:
         return True
 
     def SimplexIterate(self):
+        # simplex c f
         # simplex[][i]
         var_in = self.getIn() if len(self.multipleFlag) == 0 else self.multipleFlag.pop(0)
         # Ya se uso
@@ -128,10 +139,11 @@ class SimplexCore:
         # simples[i][]
         var_out = self.getOut(var_in)
         # pivote
-        self.update_pivote(var_out, var_in)
+        self.update_pivote(var_out,var_in)
         # resto
         self.update_resto(var_out, var_in)
         print(self)
+        print()
         return self if self.chechSol() else self.SimplexIterate()
 
     def SimplexStart(self):
@@ -146,13 +158,18 @@ class SimplexCore:
         width = max(
             [list_str_w(self.base), matrix_str_w(self.decision), matrix_str_w(self.holgura), list_str_w(self.val_sol),
              len("Val Sol")])
-        len_d = len(self.decision[0])
-        leng_h = len(self.holgura[0])
-        heads = ["x{}".format(d) for d in range(0, len_d)] + ["h{}".format(d) for d in range(0, len_d)] + ["Val Sol"]
-        quantity = 1 + 1 + len_d + leng_h
+        len_d = len(self.decision)
+        len_h = len(self.holgura)
+        heads = ["x{}".format(d) for d in range(0, len_d)] + ["h{}".format(d) for d in range(0, len_h)] + ["Val Sol"]
+        quantity = 1 + 1 + len_d + len_h
         head = head_m(quantity).format("Base", *heads, width=width)
-        matrix = [head_m(quantity).format([[self.base[ii]]
-                                           + [d_ij for d_ij in self.decision[ii]]
-                                           + [d_jj for d_jj in self.holgura[ii]]
-                                           + [self.val_sol[ii]] for ii in self.heigth], width=width)]
-        return "\n".join(head + matrix)
+        # matrix = [head_m(quantity).format([[self.base[ii]]
+        #                                   + [d_ij[ii] for d_ij in self.decision]
+        #                                  + [d_jj[ii] for d_jj in self.holgura]
+        #                                   + [self.val_sol[ii]] for ii in range(0,self.heigth-1)], width=width)]
+        matrix = [head_m(quantity).format(str(self.base[ii]),
+                                          *([str(d_ij[ii]) for d_ij in self.decision]
+                                           + [str(d_jj[ii]) for d_jj in self.holgura]
+                                           + [str(self.val_sol[ii])]),width=width) for ii in range(0,self.heigth)]
+        matrix.insert(0,head)
+        return "\n".join(matrix)

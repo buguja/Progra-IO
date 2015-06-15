@@ -42,3 +42,5 @@ def read(filenane):
         data = file.read()
     return data
 
+def special_div(dividendo,divisor):
+    return -1 if divisor == 0 else dividendo/divisor

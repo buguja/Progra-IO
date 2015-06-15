@@ -1,6 +1,5 @@
-__author__ = 'José Pablo'
+__author__ = 'JosÃ© Pablo'
 from enum import Enum
 class mtype(Enum):
     Min = 1
     Max = 2
-
