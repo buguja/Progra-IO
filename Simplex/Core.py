@@ -1,20 +1,34 @@
-from Tools import special_div
-
 __author__ = 'José Pablo'
+
 from Enums import mtype
+from Tools import special_div
 from Simplex.printing import list_str_w, matrix_str_w, head_m
 
 class SimplexCore:
-    def __init__(self, qDescicion, qHolgura,qArtificial=0, qSuperhabit=0, qDir=mtype.Min):
+    def __init__(self, qDescicion, qHolgura, qArtificial=0, qSuperhabit=0, qDir=mtype.Min):
         #Matrix
+        # Base
         self.base = []
+        #  sub[col][fila] => celda
+        # Var decision X_n
         self.decision = []
         for i in range(0, qDescicion):
             self.decision.append([])
+        # Var holgura H_n
         self.holgura = []
         for j in range(0, qHolgura):
             self.holgura.append([])
+        # Var Superhabit
+        self.superhabit = []
+        for k in range(0,qSuperhabit):
+            self.superhabit.append([])
+        # Var Artificiales
+        self.artificial = []
+        for l in range(0,qArtificial):
+            self.artificial.append([])
+        # Valor solucion
         self.val_sol = []
+        # Si hay algo extra
         self.Solucion = ""
         # Funcion
         self.find = min if qDir == mtype.Max else max
@@ -27,27 +41,39 @@ class SimplexCore:
         self.inlist = []
         self.multipleFlag = []
 
-    def addRestricion(self, iBase, iDescicion, iHolgura, iSol):
+    def addRestricion(self, iBase, iDescicion, iHolgura,iSuperhabit, iArtificial, iSol):
         self.base.append(iBase)
-        for i in range(0, len(iDescicion)):
-            self.decision[i].append(iDescicion[i])
-        for j in range(0, len(iHolgura)):
-            self.holgura[j].append(iHolgura[j])
+        for i,elem in enumerate(iDescicion):
+            self.decision[i].append(elem)
+        for j, elem in enumerate(iHolgura):
+            self.holgura[j].append(elem)
+        for k, elem in enumerate(iSuperhabit):
+            self.superhabit[k].append(elem)
+        for l, elem in enumerate(iArtificial):
+            self.artificial[l].append(elem)
         self.val_sol.append(iSol)
         self.heigth += 1
 
+    def getSubZ(self,submatrix):
+        return [col[-1] for col in submatrix]
+
+    def getZ(self):
+        return self.getSubZ(self.decision)+self.getSubZ(self.holgura)+self.getSubZ(self.superhabit)+self.getSubZ(self.artificial)
+
     def getIn(self):
         # encuentra el valor de el min/max entre descion y holgura
-        last_row = [col[-1] for col in self.decision] + [col[-1] for col in self.holgura]
+        last_row = self.getZ()
         value = self.find(last_row)
         # retorna el index
         return last_row.index(value)
 
-
     def getOut(self, index_pivote_c):
-        # Usar (Descicion o Holgura)
-        submatrix = self.local_sub(index_pivote_c)
-        index_pivote_c_1 = self.local_index(index_pivote_c)
+        # Usar la submatrix adecuada
+        local = self.localizar(index_pivote_c)
+        if type(local)==int:
+            return
+        submatrix = local[0]
+        index_pivote_c_1 = local[1]
         # Obtener la columna
         pivote_c = submatrix[index_pivote_c_1]
         # si no hay empate en el paso pasado
@@ -65,12 +91,24 @@ class SimplexCore:
         # retornar el 1ro de la lista, indices de fila
         return self.empateList.pop(0)
 
-    def local_index(self, index_pivote_c):
-        leng = len(self.decision)
-        return index_pivote_c if index_pivote_c < leng else index_pivote_c - leng
-
-    def local_sub(self, index_pivote_c):
-        return self.decision if index_pivote_c < len(self.decision) else self.holgura
+    def localizar(self, index_pivote_col):
+        len_d = len(self.decision)
+        if index_pivote_col< len_d:
+            return (self.decision,index_pivote_col)
+        temp = index_pivote_col- len_d
+        len_h = len(self.holgura)
+        if temp < len_h:
+            return (self.holgura,temp)
+        temp -= len_h
+        len_s = len(self.superhabit)
+        if temp < len_s:
+            return (self.superhabit,temp)
+        temp -= len_s
+        len_a = len(self.artificial)
+        if(temp<len_a):
+            return (self.artificial,temp)
+        self.Solucion = "ERROR"
+        return temp-len_a
 
     def map_pivote(self, matrix, pivote, index):
         # para cada elemento de la lista dividalo entre el pivote
@@ -89,6 +127,10 @@ class SimplexCore:
         self.map_pivote(self.decision, pivote,index_x)
         # actualizar la submatriz de holgura
         self.map_pivote(self.holgura, pivote,index_x)
+        # actualizar la submatriz de superhabit
+        self.map_pivote(self.superhabit, pivote,index_x)
+        # actualizar la submatriz de artifical
+        self.map_pivote(self.artificial, pivote,index_x)
         # actualizar el val solucion
         self.val_sol[index_x] /= pivote
 
@@ -115,12 +157,16 @@ class SimplexCore:
             self.map_otras(self.decision,fila, pivote_d, pivore_columna)
             # holgura
             self.map_otras(self.holgura, fila, pivote_h, pivore_columna)
+            # superhabit
+            self.map_otras(self.superhabit, fila, pivote_h, pivore_columna)
+            # artificial
+            self.map_otras(self.artificial, fila, pivote_h, pivore_columna)
             # val sol
             self.val_sol[fila] = self.val_sol[fila] - (pivote_vs * pivore_columna)
 
     def chechSol(self):
         # Hay 0 (+|-) segun el metodo
-        if (len([elem for elem in ([col[-1] for col in self.decision] + [col[-1] for col in self.holgura]) if self.stop(elem)]) > 0):
+        if (len([elem for elem in self.getZ() if self.stop(elem)]) > 0):
             # Hay almenos 1, iterar una vez más
             return False
         # Revisar por el degenerado
