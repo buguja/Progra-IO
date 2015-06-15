@@ -5,7 +5,8 @@ from Enums import mtype
 from Simplex.printing import list_str_w, matrix_str_w, head_m
 
 class SimplexCore:
-    def __init__(self, qDescicion, qHolgura, qDir=mtype.Min):
+    def __init__(self, qDescicion, qHolgura,qArtificial=0, qSuperhabit=0, qDir=mtype.Min):
+        #Matrix
         self.base = []
         self.decision = []
         for i in range(0, qDescicion):
