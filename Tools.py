@@ -44,3 +44,6 @@ def read(filenane):
 
 def special_div(dividendo,divisor):
     return -1 if divisor == 0 else dividendo/divisor
+
+def fill_w(sub, w=0):
+    return [w for _ in sub]
