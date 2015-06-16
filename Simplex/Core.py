@@ -8,6 +8,7 @@ class SimplexCore:
     def __init__(self, qDescicion, qHolgura, qArtificial, qSuperhabit, qDir):
         #Matrix
         # Base
+        self.Zcuantity = 1
         self.base = []
         #  sub[col][fila] => celda
         # Var decision X_n
@@ -54,6 +55,7 @@ class SimplexCore:
         self.val_sol.append(iSol)
         self.heigth += 1
 
+
     def getSubZ(self,submatrix):
         return [col[-1] for col in submatrix]
 
@@ -81,7 +83,7 @@ class SimplexCore:
             self.Solucion = "Degenerado"
         if not self.empateFlag:
             # dividir ValSol / columna pivote
-            list_div = [special_div(self.val_sol[i] , pivote_c[i]) for i in range(0, len(self.base))]
+            list_div = [special_div(self.val_sol[i] , pivote_c[i]) for i in range(0, self.heigth-self.Zcuantity)]
             # obtener el minimo
             minimum = min([positive for positive in list_div if positive > 0])
             # dejar el indece del min en empateList
@@ -184,9 +186,12 @@ class SimplexCore:
             # val sol
             self.val_sol[fila] = self.val_sol[fila] - (pivote_vs * pivore_columna)
 
+    def stopf(self):
+        return len([elem for elem in self.getZ() if self.stop(elem)]) > 0
+
     def chechSol(self):
         # Hay 0 (+|-) segun el metodo
-        if (len([elem for elem in self.getZ() if self.stop(elem)]) > 0):
+        if self.stopf():
             # Hay almenos 1, iterar una vez más
             return False
         # Revisar por el degenerado
@@ -216,12 +221,20 @@ class SimplexCore:
         print()
         return self if self.chechSol() else self.SimplexIterate()
 
-    def SimplexStart(self):
+    def CheckAcotada(self):
         for var_d in self.decision:
             if 0 == len([z for z in var_d if z >= 0]):
                 self.Solucion = "No acotada"
-                return self
-        return self.SimplexIterate()
+                return False
+        return True
+
+    def Start(self):
+        return self if not self.CheckAcotada() else self.SimplexIterate()
+
+
+
+
+
 
     def __str__(self):
         # Warning! Heavy use of lists comprehension ahead. Proceed with extreme care

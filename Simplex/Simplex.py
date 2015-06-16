@@ -1,4 +1,6 @@
 __author__ = 'José Pablo'
+
+from Tools import fill_w
 from Enums import mtype
 from  Simplex.Core import SimplexCore
 
@@ -10,5 +12,5 @@ class Simplex (SimplexCore):
         super().addRestricion(iBase, iDescicion, iHolgura, [], [], iSol)
 
     def addFunObj(self,iDescicion):
-        self.addRestricion("z",iDescicion,[0 for _ in self.holgura])
+        self.addRestricion("z",iDescicion,fill_w(self.holgura))
 
