@@ -1,3 +1,5 @@
+from fractions import Fraction
+
 __author__ = 'José Pablo'
 
 from Tools import fill_w
@@ -6,7 +8,7 @@ from  Simplex.Core import SimplexCore
 
 class DualCore1(SimplexCore):
     def __init__(self,qDescicion, qHolgura, qArtificial, qSuperhabit):
-        super(qDescicion, qHolgura, qArtificial, qSuperhabit, mtype.Max)
+        super().__init__(qDescicion, qHolgura, qArtificial, qSuperhabit, mtype.Max)
         self.stop = lambda x: x == 1
         self.Zcuantity = 2
 
@@ -17,27 +19,40 @@ class DualCore1(SimplexCore):
         last_row = self.getSubZ(self.artificial)
         return len([elem for elem in last_row if self.stop(elem)]) < len(last_row)
 
+    def chechSol(self):
+        # Hay 0 (+|-) segun el metodo
+        if self.stopf():
+            # Hay almenos 1, iterar una vez más
+            return False
+        return True
+
     # always must be [-1]
     def addZ(self,iDecision):
-        self.addRestricion("z",iDecision,fill_w(self.holgura), fill_w(self.superhabit),fill_w(self.artificial))
+        self.addRestricion("z",iDecision,fill_w(self.holgura), fill_w(self.superhabit),fill_w(self.artificial),0)
 
     #always must be [-2]
     def addZPrima(self):
-        self.addRestricion("z'",fill_w(self.decision),fill_w(self.holgura), fill_w(self.superhabit),fill_w(self.artificial,1))
+        self.addRestricion("z'",fill_w(self.decision),fill_w(self.holgura), fill_w(self.superhabit),fill_w(self.artificial,1),0)
 
     def Prepare_sub(self,sub):
-        leng = len(self.base)
         for col in sub:
             acc = 0
-            for i in range(0,leng-2):
+            for i in range(0,self.heigth-2):
                 acc+=col[i]
             col[-2] -=acc
+
+    def Prepare_valSol(self):
+        acc = 0
+        for i in range(0,self.heigth-2):
+            acc+=self.val_sol[i]
+        self.val_sol[-2] -=acc
 
     def Prepare(self):
         self.Prepare_sub(self.decision)
         self.Prepare_sub(self.holgura)
         self.Prepare_sub(self.superhabit)
         self.Prepare_sub(self.artificial)
+        self.Prepare_valSol()
 
 
 
@@ -45,22 +60,32 @@ class DualCore1(SimplexCore):
         if not self.CheckAcotada():
             return self
         self.Prepare()
-        self.SimplexIterate()
+        print(self)
+        return self.SimplexIterate()
 
 
 class DualCore2(SimplexCore):
     def __init__(self,qDescicion, qHolgura, qSuperhabit, qDir):
-        super(qDescicion, qHolgura, 0, qSuperhabit, qDir)
+        super().__init__(qDescicion, qHolgura, 0, qSuperhabit, qDir)
+
     def addRestricion(self, iBase, iDescicion, iHolgura,iSuperhabit, iSol):
         super().addRestricion(iBase,iDescicion,iHolgura,iSuperhabit,[],iSol)
 
+
+
+
 class Dual():
+
     def __init__(self,qDescicion, qHolgura, qArtificial, qSuperhabit,qDir):
         self.fase1 = DualCore1(qDescicion, qHolgura, qArtificial, qSuperhabit)
         self.fase2 = DualCore2(qDescicion, qHolgura, qSuperhabit,qDir)
+        self.Result="";
 
     def addRestrictuion(self, iBase, iDescicion, iHolgura,iSuperhabit, iArtificial, iSol):
-        self.fase1.addRestricion(iBase, iDescicion, iHolgura,iSuperhabit, iArtificial, iSol)
+        self.fase1.addRestricion(iBase, list(map(Fraction.from_float,iDescicion)),
+                                 list(map(Fraction.from_float,iHolgura)),
+                                 list(map(Fraction.from_float,iSuperhabit)),
+                                 list(map(Fraction.from_float,iArtificial)), iSol)
 
     def addFunObj(self,iDecision):
         self.fase1.addZPrima()
@@ -70,7 +95,12 @@ class Dual():
         return [col[i] for col in sub]
 
     def Start(self):
-        self.fase1.Start()
+        print(self.fase1)
+        ret = self.fase1.Start()
+        print()
+        if(ret.val_sol[-2]!=0):
+            result = "Sin Solución"
+            return self
         for i, elem in enumerate(self.fase1.base):
-            self.fase2.addRestricion(elem,self.sbrow(self.fase1.decision,i), self.sbrow(self.fase1.holgura,i),self.sbrow(self.fase1.superhabit,i) ,self.fase1.val_sol[i])
-        self.fase2.Start()
+            self.fase2.addRestricion(elem,self.sbrow(ret.decision,i), self.sbrow(ret.holgura,i),self.sbrow(ret.superhabit,i) ,ret.val_sol[i])
+        return self.fase2.Start()

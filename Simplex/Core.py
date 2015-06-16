@@ -33,7 +33,7 @@ class SimplexCore:
         self.Solucion = ""
         # Funcion
         self.find = min if qDir == mtype.Max else max
-        self.stop = lambda x: x < 0 if qDir == mtype.Max else lambda x: x > 0
+        self.stop = (lambda x: x < 0 )if qDir == mtype.Max else (lambda x: x > 0)
 
         self.heigth = 0
         # Flags
@@ -133,10 +133,9 @@ class SimplexCore:
         if type(local)==int:
             return
         submatrix = local[0]
-        index_pivote_c_1 = local[1]
-        # obtener pivote operacional
-        pivote = submatrix[index_y][index_x]
         index_y_local = local[1]
+        # obtener pivote operacional
+        pivote = submatrix[index_y_local][index_x]
         # actualizar la base
         self.base[index_x] = "{}{}".format(self.map_letter(submatrix),index_y_local)
         # actualizar la submatriz de desicion
@@ -158,16 +157,17 @@ class SimplexCore:
         # fila pivote
         pivote_d = [col[index_x] for col in self.decision]
         pivote_h = [col[index_x] for col in self.holgura]
+        pivote_s = [col[index_x] for col in self.superhabit]
+        pivote_a = [col[index_x] for col in self.artificial]
         pivote_vs = self.val_sol[index_x]
         # Usar submatrix correcta
         local = self.localizar(index_y)
         if type(local)==int:
             return
         submatrix = local[0]
-        index_pivote_c_1 = local[1]
-        # obtener pivote operacional
-        pivote = submatrix[index_y][index_x]
         index_y_local = local[1]
+        # obtener pivote operacional
+        pivote = submatrix[index_y_local][index_x]
         for fila in range(0, self.heigth):
             #No actualizar la pivote
             if(fila == index_x):
@@ -180,9 +180,9 @@ class SimplexCore:
             # holgura
             self.map_otras(self.holgura, fila, pivote_h, pivore_columna)
             # superhabit
-            self.map_otras(self.superhabit, fila, pivote_h, pivore_columna)
+            self.map_otras(self.superhabit, fila, pivote_s, pivore_columna)
             # artificial
-            self.map_otras(self.artificial, fila, pivote_h, pivore_columna)
+            self.map_otras(self.artificial, fila, pivote_a, pivore_columna)
             # val sol
             self.val_sol[fila] = self.val_sol[fila] - (pivote_vs * pivore_columna)
 
@@ -194,7 +194,7 @@ class SimplexCore:
         if self.stopf():
             # Hay almenos 1, iterar una vez más
             return False
-        # Revisar por el degenerado
+        # Revisar por el sol multiple
         diff = list(set(range(0, len([zero[-1] for zero in self.decision if zero[-1] == 0]))) - set(self.inlist))
         # Hay 0 de diff
         if (len(diff) > 0):
@@ -233,6 +233,8 @@ class SimplexCore:
 
 
 
+    def print_aux(self,letter,lensub):
+        return ["{}{}".format(letter,i) for i in range(0, lensub)]
 
 
 
@@ -243,12 +245,16 @@ class SimplexCore:
              len("Val Sol")])
         len_d = len(self.decision)
         len_h = len(self.holgura)
-        heads = ["x{}".format(d) for d in range(0, len_d)] + ["h{}".format(d) for d in range(0, len_h)] + ["Val Sol"]
-        quantity = 1 + 1 + len_d + len_h
+        len_s = len(self.superhabit)
+        len_a = len(self.artificial)
+        heads = self.print_aux("x",len_d)+self.print_aux("h",len_h)+self.print_aux("s",len_s)+self.print_aux("a",len_a) + ["Val Sol"]
+        quantity = 1 + 1 + len_d + len_h+len_s+len_a
         head = head_m(quantity).format("Base", *heads, width=width)
         matrix = [head_m(quantity).format(str(self.base[ii]),
                                           *([str(d_ij[ii]) for d_ij in self.decision]
                                            + [str(d_jj[ii]) for d_jj in self.holgura]
+                                           + [str(d_jj[ii]) for d_jj in self.superhabit]
+                                           + [str(d_jj[ii]) for d_jj in self.artificial]
                                            + [str(self.val_sol[ii])]),width=width) for ii in range(0,self.heigth)]
         matrix.insert(0,head)
         return "\n".join(matrix)
