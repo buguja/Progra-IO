@@ -11,9 +11,7 @@ class ParserHungaro:
          self.tipo=int(lineas[0])
          if(lineas[1]!=''):
              self.atiende=[int(i) for i in lineas[1].split(" ")]
-         print(lineas)
          lineas=lineas[2:]
          for val in lineas:
              self.costos.append(([int(i) for i in val.split(" ")]))
 
-         print(self.costos)

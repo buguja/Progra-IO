@@ -3,9 +3,11 @@ import math
 import Graficador
 import PL
 from Dinamica.Mochila import mochila
+from Dinamica.Reemplazo import reemplazo
 from Transporte.Hungaro import hungaro
 from Transporte.Vogel import vogel
 from Transporte.EsquinaNoroeste import esquinaNoroestre
+from Parser.Parser_Reemplazo import ParserReemplazo
 from Parser.Parser_Vogel import ParserVogel
 from Parser.Parser_Hungaro import ParserHungaro
 from Parser.Parser_Mochila import ParserMochila
@@ -68,7 +70,10 @@ class Application(tk.Frame):
 
         # Mochila
         self.Mochila = tk.Button(self, text="Mochila", command=self._mochila)
-        self.Mochila.grid(column=5, row=5)
+        self.Mochila.grid(column=7, row=2)
+        # Reemplazo
+        self.Reemplazo = tk.Button(self, text="Reemplazo", command=self._reemplazo)
+        self.Reemplazo.grid(column=7, row=3)
 
     def load(self):
         self.file = askopenfilename()
@@ -163,6 +168,19 @@ class Application(tk.Frame):
         parser=ParserMochila(text_f_get)
         top = tk.Toplevel()
         string=mochila(parser.articulos,parser.contenedor)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+        pass
+
+    def _reemplazo(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserReemplazo(text_f_get)
+        top = tk.Toplevel()
+        string=reemplazo(parser.anoInicial,parser.periodo,parser.remplazoI,parser.remplazoF,parser.costoMaquina,parser.costos)
         msg = tk.Text(top,height=40, width=130)
         msg.insert("1.0",string)
         msg.pack()
