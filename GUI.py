@@ -2,6 +2,8 @@ import math
 
 import Graficador
 import PL
+from Dinamica.Mochila import mochila
+from Parser.Parser_Mochila import ParserMochila
 from Parser.Parser_PL import ParserPLG
 from Parser.PosParser import Posparser
 from Parser.PreParser import Preparser
@@ -49,6 +51,10 @@ class Application(tk.Frame):
         self.Transporte = tk.Button(self, text="Simplex", command=self._simplex)
         self.Transporte.grid(column=5, row=4)
 
+        # Mochila
+        self.Mochila = tk.Button(self, text="Mochila", command=self._mochila)
+        self.Mochila.grid(column=5, row=5)
+
     def load(self):
         self.file = askopenfilename()
         pre = Preparser(self.file)
@@ -94,6 +100,21 @@ class Application(tk.Frame):
 
         Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
 
+    def _mochila(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserMochila(text_f_get)
+        top = tk.Toplevel()
+        string=mochila(parser.articulos,parser.contenedor)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+
+        button = tk.Button(top, text="Cerrar", command=top.destroy)
+        button.pack()
+        pass
 
     def _transporte(self):
         pass
