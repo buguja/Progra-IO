@@ -1,10 +1,10 @@
 __author__ = 'José Pablo'
 
-from Enums import mtype
+from Enums import Mtype
 from  Simplex.Core import SimplexCore
 from decimal import *
 
-test = SimplexCore(2,3,0,0,mtype.Max)
+test = SimplexCore(2,3,0,0,Mtype.Max)
 test.addRestricion("h",[ 2,1],[1,0,0], [],[], 18)
 test.addRestricion("s",[ 2,3],[0,1,0], [],[], 42)
 test.addRestricion("d",[ 3,1],[0,0,1], [],[], 24)

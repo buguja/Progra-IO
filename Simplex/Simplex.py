@@ -2,11 +2,11 @@ __author__ = 'José Pablo'
 
 from fractions import Fraction
 from Tools import fill_w
-from Enums import mtype
+from Enums import Mtype
 from  Simplex.Core import SimplexCore
 
 class Simplex (SimplexCore):
-    def __init__(self, qDescicion, qHolgura, qDir=mtype.Max):
+    def __init__(self, qDescicion, qHolgura, qDir=Mtype.Max):
         super().__init__(qDescicion, qHolgura,0,0,qDir)
 
     def addRestricion(self, iBase, iDescicion, iHolgura, iSol):

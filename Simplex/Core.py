@@ -1,6 +1,6 @@
 __author__ = 'José Pablo'
 
-from Enums import mtype
+from Enums import Mtype
 from Tools import special_div
 from Simplex.printing import list_str_w, matrix_str_w, head_m
 
@@ -32,8 +32,8 @@ class SimplexCore:
         # Si hay algo extra
         self.Solucion = ""
         # Funcion
-        self.find = min if qDir == mtype.Max else max
-        self.stop = (lambda x: x < 0 )if qDir == mtype.Max else (lambda x: x > 0)
+        self.find = min if qDir == Mtype.Max else max
+        self.stop = (lambda x: x < 0 )if qDir == Mtype.Max else (lambda x: x > 0)
 
         self.heigth = 0
         # Flags

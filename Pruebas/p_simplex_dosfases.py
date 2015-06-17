@@ -1,10 +1,10 @@
 __author__ = 'José Pablo'
 
 from Simplex.DosFases import DosFases
-from Enums import mtype
+from Enums import Mtype
 
 
-test = DosFases(3,0,2,1,mtype.Min)
+test = DosFases(3,0,2,1,Mtype.Min)
 test.addRestricion("a1",[6,12,0],[],[-1],[1,0],40)
 test.addRestricion("a2",[4, 2,4],[],[ 0],[0,1],30)
 test.addFunObj([-12,-8,-8])

@@ -1,4 +1,4 @@
-from Enums import mtype
+from Enums import Mtype
 
 __author__ = 'José Pablo'
 
@@ -11,7 +11,7 @@ class GranM(SimplexCore):
 
     def __init__(self, qDescicion, qHolgura, qArtificial, qSuperhabit, qDir):
         super().__init__(qDescicion, qHolgura, qArtificial, qSuperhabit, qDir)
-        self.prepF = 1 if qDir==mtype.Min else -1
+        self.prepF = 1 if qDir==Mtype.Min else -1
 
 
     def addFunObj(self,iDescicion):

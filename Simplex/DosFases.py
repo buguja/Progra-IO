@@ -2,12 +2,12 @@ __author__ = 'José Pablo'
 
 from fractions import Fraction
 from Tools import fill_w
-from Enums import mtype
+from Enums import Mtype
 from  Simplex.Core import SimplexCore
 
 class DosFasesCore1(SimplexCore):
     def __init__(self,qDescicion, qHolgura, qArtificial, qSuperhabit):
-        super().__init__(qDescicion, qHolgura, qArtificial, qSuperhabit, mtype.Max)
+        super().__init__(qDescicion, qHolgura, qArtificial, qSuperhabit, Mtype.Max)
         self.stop = lambda x: x == 1
         self.Zcuantity = 2
 
