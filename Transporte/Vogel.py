@@ -3,6 +3,13 @@ import sys
 import numpy as np
 from copy import deepcopy
 
+strRespuesta=''
+
+def RespuestaFinal(Matriz):
+    global strRespuesta
+    strRespuesta+=("\n".join(["\t".join(map(str, r)) for r in Matriz]))
+    strRespuesta+="\n\n"
+
 def redefineTable(table,tablaFinal):
     posiciones=findMaxPenali(table)
     len_filas=len(table)
@@ -119,22 +126,27 @@ def getCostoTotal(costos,tablaFinal):
     return sum(sum(costos*tablaFinal))
 
 def vogel(costos):
+    global strRespuesta
+    strRespuesta=''
     table=deepcopy(costos)
+    RespuestaFinal(costos)
     tablaFinal=limpiarTablaFinal(deepcopy(costos))
     fillTable(table)
+    RespuestaFinal(table)
     contador=len(costos)+len(costos[0])-3#esto es cuantas filas y columnas sin las de oferta y demanda y una menos ya que ya se acabo
     #no hay que iterar cuando ya solo queda 1 valor
     #while(len(table)!=3 and len(table[0])!=3):
     while(contador>0):
         calculatePenali(table)
-        printTable(table)
+        RespuestaFinal(table)
         redefineTable(table,tablaFinal)
         contador-=1
-    printTable(table)
-    printTable(tablaFinal)
-    return getCostoTotal(costos,tablaFinal)
+    RespuestaFinal(table)
+    strRespuesta+="Tabla Final\n\n"
+    RespuestaFinal(tablaFinal)
+    strRespuesta+="Costo Total= "+str(getCostoTotal(costos,tablaFinal))
+    return strRespuesta
 
-
-print(vogel([[5,2,7,3,80],[3,6,6,1,30],[6,1,2,4,60],[4,3,6,6,45],[70,40,70,35,0]]))
+#vogel([[5,2,7,3,80],[3,6,6,1,30],[6,1,2,4,60],[4,3,6,6,45],[70,40,70,35,0]])
 #vogel([[2,3,4,6,100],[1,5,8,3,120],[8,5,1,4,80],[4,5,6,3,95],[125,50,130,90,0]])
 #vogel([[5,1,8,12],[2,4,0,14],[3,6,7,4],[9,10,11,0]])

@@ -6,6 +6,7 @@ from Dinamica.Mochila import mochila
 from Transporte.Hungaro import hungaro
 from Transporte.Vogel import vogel
 from Transporte.EsquinaNoroeste import esquinaNoroestre
+from Parser.Parser_Vogel import ParserVogel
 from Parser.Parser_Hungaro import ParserHungaro
 from Parser.Parser_Mochila import ParserMochila
 from Parser.Parser_PL import ParserPLG
@@ -132,9 +133,9 @@ class Application(tk.Frame):
         if text_f_get[-1] == "\n":
             showerror("Error", "Retire todos los saltos de linea al final inecesarios")
             return
-        parser=ParserHungaro(text_f_get)
+        parser=ParserVogel(text_f_get)
         top = tk.Toplevel()
-        string=hungaro(parser.costos,parser.tipo,parser.atiende)
+        string=vogel(parser.costos)
         msg = tk.Text(top,height=40, width=130)
         msg.insert("1.0",string)
         msg.pack()
