@@ -3,6 +3,10 @@ import math
 import Graficador
 import PL
 from Dinamica.Mochila import mochila
+from Transporte.Hungaro import hungaro
+from Transporte.Vogel import vogel
+from Transporte.EsquinaNoroeste import esquinaNoroestre
+from Parser.Parser_Hungaro import ParserHungaro
 from Parser.Parser_Mochila import ParserMochila
 from Parser.Parser_PL import ParserPLG
 from Parser.PosParser import Posparser
@@ -50,6 +54,16 @@ class Application(tk.Frame):
         # Simplex
         self.Transporte = tk.Button(self, text="Simplex", command=self._simplex)
         self.Transporte.grid(column=5, row=4)
+
+        # Hungaro
+        self.Hungaro = tk.Button(self, text="Hungaro", command=self._hungaro)
+        self.Hungaro.grid(column=6, row=2)
+        # Vogel
+        self.Vogel = tk.Button(self, text="Vogel", command=self._vogel)
+        self.Vogel.grid(column=6, row=3)
+        # EsquinaNoroeste
+        self.Esquina = tk.Button(self, text="EsquinaNoroeste", command=self._esquina)
+        self.Esquina.grid(column=6, row=4)
 
         # Mochila
         self.Mochila = tk.Button(self, text="Mochila", command=self._mochila)
@@ -100,6 +114,46 @@ class Application(tk.Frame):
 
         Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
 
+    def _hungaro(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserHungaro(text_f_get)
+        top = tk.Toplevel()
+        string=hungaro(parser.costos,parser.tipo,parser.atiende)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+        pass
+
+    def _vogel(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserHungaro(text_f_get)
+        top = tk.Toplevel()
+        string=hungaro(parser.costos,parser.tipo,parser.atiende)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+        pass
+
+    def _esquina(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserHungaro(text_f_get)
+        top = tk.Toplevel()
+        string=hungaro(parser.costos,parser.tipo,parser.atiende)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+        pass
+
+
     def _mochila(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
         if text_f_get[-1] == "\n":
@@ -111,9 +165,6 @@ class Application(tk.Frame):
         msg = tk.Text(top,height=40, width=130)
         msg.insert("1.0",string)
         msg.pack()
-
-        button = tk.Button(top, text="Cerrar", command=top.destroy)
-        button.pack()
         pass
 
     def _transporte(self):
