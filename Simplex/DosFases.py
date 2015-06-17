@@ -1,7 +1,6 @@
-from fractions import Fraction
-
 __author__ = 'José Pablo'
 
+from fractions import Fraction
 from Tools import fill_w
 from Enums import mtype
 from  Simplex.Core import SimplexCore
