@@ -79,6 +79,7 @@ class DosFases():
         self.fase1 = DosFasesCore1(qDescicion, qHolgura, qArtificial, qSuperhabit)
         self.fase2 = DosFasesCore2(qDescicion, qHolgura, qSuperhabit,qDir)
         self.Result="";
+        self.Output = []
 
     def addRestricion(self, iBase, iDescicion, iHolgura,iSuperhabit, iArtificial, iSol):
         self.fase1.addRestricion(iBase, list(map(Fraction.from_float,iDescicion)),
@@ -94,9 +95,10 @@ class DosFases():
         return [col[i] for col in sub]
 
     def Start(self):
-        print(self.fase1)
+        self.Output.append(str(self.fase1))
         ret = self.fase1.Start()
-        print()
+        self.Output+=ret.Output
+        self.Output.append(" ")
         if(ret.val_sol[-2]!=0):
             result = "Sin Solución"
             return self.fase1
@@ -104,4 +106,6 @@ class DosFases():
             if i == self.fase1.heigth-2:
                 continue
             self.fase2.addRestricion(elem,self.sbrow(ret.decision,i), self.sbrow(ret.holgura,i),self.sbrow(ret.superhabit,i) ,ret.val_sol[i])
-        return self.fase2.Start() if not self.fase2.chechSol() else self.fase2
+        ret2 = self.fase2.Start() if not self.fase2.chechSol() else self.fase2
+        self.Output+= ret2.Output
+        return ret2

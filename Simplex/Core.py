@@ -31,6 +31,7 @@ class SimplexCore:
         self.val_sol = []
         # Si hay algo extra
         self.Solucion = ""
+        self.Output = []
         # Funcion
         self.find = min if qDir == Mtype.Max else max
         self.stop = (lambda x: x < 0 )if qDir == Mtype.Max else (lambda x: x > 0)
@@ -217,8 +218,8 @@ class SimplexCore:
         self.update_pivote(var_out,var_in)
         # resto
         self.update_resto(var_out, var_in)
-        print(self)
-        print()
+        self.Output.append(str(self))
+        self.Output.append(" ")
         return self if self.chechSol() else self.SimplexIterate()
 
     def CheckAcotada(self):
