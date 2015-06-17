@@ -231,12 +231,11 @@ class SimplexCore:
     def Start(self):
         return self if not self.CheckAcotada() else self.SimplexIterate()
 
-
+    def result(self):
+        return [(self.base[i],self.val_sol[i]) for i in range(0,self.heigth)]
 
     def print_aux(self,letter,lensub):
         return ["{}{}".format(letter,i) for i in range(0, lensub)]
-
-
 
     def __str__(self):
         # Warning! Heavy use of lists comprehension ahead. Proceed with extreme care

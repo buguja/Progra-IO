@@ -15,5 +15,4 @@ class Simplex (SimplexCore):
                                  list(map(Fraction.from_float,iHolgura)), [], [], iSol)
 
     def addFunObj(self,iDescicion):
-        self.addRestricion("z",iDescicion,fill_w(self.holgura))
-
+        self.addRestricion("z",iDescicion,fill_w(self.holgura),0)
