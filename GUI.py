@@ -146,9 +146,9 @@ class Application(tk.Frame):
         if text_f_get[-1] == "\n":
             showerror("Error", "Retire todos los saltos de linea al final inecesarios")
             return
-        parser=ParserHungaro(text_f_get)
+        parser=ParserVogel(text_f_get)#si usa el mismo parser que el vogel
         top = tk.Toplevel()
-        string=hungaro(parser.costos,parser.tipo,parser.atiende)
+        string=esquinaNoroestre(parser.costos)
         msg = tk.Text(top,height=40, width=130)
         msg.insert("1.0",string)
         msg.pack()
