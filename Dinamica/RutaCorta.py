@@ -1,5 +1,9 @@
 __author__ = 'luisdiegopizarro'
 import sys
+
+strRespuesta=''
+todasMatrices=[]
+
 def RespuestaFinal(Matriz):
     global strRespuesta
     s = [[str(e) for e in row] for row in Matriz]
@@ -16,10 +20,9 @@ def getColumn(index,matrix):
     return column
 
 def tablas(etapas,pesos):
+    global todasMatrices
     acumulado=[0]*len(etapas[len(etapas)-2])
-    print(acumulado)
     for i in range(len(etapas)-1,0,-1):#recorre las etapas
-        todasMatrices=[]
         fila=[]
         matriz=[]
         for j in range(0,len(etapas[i-1])):#recorre la etapa anterior
@@ -37,14 +40,9 @@ def tablas(etapas,pesos):
             matriz.append(fila[:])
             fila.clear()
         acumulado=getColumn(len(matriz[0])-2,matriz)
-        print(acumulado)
-        print(matriz)
+        RespuestaFinal(matriz)
         todasMatrices.append(matriz[:])
         matriz.clear()
-
-
-
-
 
 def calcularEtapas(pesos):
     etapas=[[1]]
@@ -58,12 +56,24 @@ def calcularEtapas(pesos):
             etapas.append(singleEtapa)
     return etapas
 
+'''
+def calcularRespuesta():
+    global todasMatrices
+    for i in reversed(todasMatrices):
+        nodo=i[len[i]-1]
+        strRespuesta+=str(nodo)
+'''
+
 
 
 def rutacorta(pesos):
+    global strRespuesta,todasMatrices
+    todasMatrices=[]
+    strRespuesta=''
     etapas=calcularEtapas(pesos)
-    print(etapas)
     tablas(etapas,pesos)
+    print(strRespuesta)
+    return strRespuesta
 
 '''
 rutacorta([
