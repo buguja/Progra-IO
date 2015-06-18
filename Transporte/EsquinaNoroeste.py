@@ -1,6 +1,15 @@
 __author__ = 'luisdiegopizarro'
 import numpy as np
 from copy import deepcopy
+
+
+strRespuesta=''
+
+def RespuestaFinal(Matriz):
+    global strRespuesta
+    strRespuesta+=("\n".join(["\t".join(map(str, r)) for r in Matriz]))
+    strRespuesta+="\n\n"
+
 def marcarFila(table,fila,cantColumnas):
     table[fila]=["-"]*(cantColumnas+1)
 
@@ -18,6 +27,7 @@ def printTable(table):
     print(' ')
 
 def iteraciones(table,tablaFinal):
+    global strRespuesta
     contador=5
     fila=0
     columna=0
@@ -45,8 +55,9 @@ def iteraciones(table,tablaFinal):
             fila+=1
             columna+=1
         contador-=1
-        printTable(table)
-    printTable(tablaFinal)
+        RespuestaFinal(table)
+    strRespuesta+="Tabla Final\n\n"
+    RespuestaFinal(tablaFinal)
 
 def limpiarTablaFinal(tablaFinal):
     filas=len(tablaFinal)
@@ -68,11 +79,15 @@ def getCostoTotal(costos,tablaFinal):
     return sum(sum(costos*tablaFinal))
 
 def esquinaNoroestre(costos):
+    global strRespuesta
+    strRespuesta=''
     table=deepcopy(costos)
+    RespuestaFinal(table)
     tablaFinal=limpiarTablaFinal(deepcopy(costos))
     iteraciones(table,tablaFinal)
-    return getCostoTotal(costos,tablaFinal)
+    strRespuesta+="Costo Total= "+str(getCostoTotal(costos,tablaFinal))
+    return strRespuesta
 
 
 #print(esquinaNoroestre([[5,2,7,3,80],[3,6,6,1,30],[6,1,2,4,60],[4,3,6,6,45],[70,40,70,35,0]]))
-print(esquinaNoroestre([[2,3,4,6,100],[1,5,8,3,120],[8,5,1,4,80],[4,5,6,3,95],[125,50,130,90,0]]))
+#print(esquinaNoroestre([[2,3,4,6,100],[1,5,8,3,120],[8,5,1,4,80],[4,5,6,3,95],[125,50,130,90,0]]))

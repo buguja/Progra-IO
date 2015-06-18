@@ -3,6 +3,8 @@ import numpy as np
 from copy import deepcopy
 __author__ = 'luisdiegopizarro'
 
+strRespuesta=''
+todaMatrices=[]
 #se va considerar una celda como todo un conjunto de celas llamese una fila o una columna
 class Celdas:
     def __init__(self,pcantidadCeros,pPosicion,pOrientacion,pPosicionCeros):
@@ -99,22 +101,28 @@ def printCeldas(items):
 def menorFila(matrizOriginal):
     matriz=deepcopy(matrizOriginal)
     largo=len(matriz)
+    global strRespuesta
     for f in range(0,largo):
         menor=matriz[f][0]
         for c in range(0,largo):
             if(matriz[f][c]<menor):menor=matriz[f][c]
         for r in range(0,largo):matriz[f][r]=matriz[f][r]-menor
+    strRespuesta+=("\n".join(["\t".join(map(str, r)) for r in matriz]))
+    strRespuesta+="\n\n"
     return matriz
 #resta a todas las columnas su menor elemento respectivamente
 def menorColumna(matrizOriginal):
     matriz=deepcopy(matrizOriginal)
     largo=len(matriz)
+    global strRespuesta
     for c in range(0,largo):
         menor=matriz[0][c]
 
         for f in range(0,largo):
             if(matriz[f][c]<menor):menor=matriz[f][c]
         for r in range(0,largo):matriz[r][c]=matriz[r][c]-menor
+    strRespuesta+=("\n".join(["\t".join(map(str, r)) for r in matriz]))
+    strRespuesta+="\n\n"
     return matriz
 
 #resta el menor valor no marcado, a todos los valores NO marcados
@@ -200,36 +208,43 @@ def evaluar(matrizCostos,soluciones,tipo):
 
 def printSolucion(respuestas,pAtiende):
     for j,solucion in enumerate(respuestas):
+        global strRespuesta
         contador=1
         atiende=deepcopy(pAtiende)
         for i in range(0,len(solucion.elementos)):
-                print("El proveedor "+str(contador)+" atiende a "+str(solucion.elementos[i]+1))
+                strRespuesta+="El proveedor "+str(contador)+" atiende a "+str(solucion.elementos[i]+1)+"\n"
                 atiende[0]-=1
                 if(atiende[0]==0):
                     contador+=1
                     atiende=atiende[1:]
 
-        print("Tiene un costo total de "+str(solucion.valor)+"\n")
+        strRespuesta+="Tiene un costo total de "+str(solucion.valor)+"\n\n"
 
 #entrada:matriz original, solo se corre cuando el proceso es de maximizar
 #salida:matriz con la fomra Mayor-entradas
 def setMatrizMax(matrizOriginal):
     matriz=deepcopy(matrizOriginal)
     mayor=0
+    global strRespuesta
     for i,f in enumerate(matriz):
         for j,c in enumerate(f):
             if(c>mayor):mayor=c
     for x,f1 in enumerate(matriz):
         for y,c1 in enumerate(f):
             matriz[x][y]=mayor-matriz[x][y]
+    strRespuesta+=("\n".join(["\t".join(map(str, r)) for r in matriz]))
+    strRespuesta+="\n\n"
     return matriz
 
 #en caso de que un proveedor pueda atender varias, se va a expandir la matriz de costos para que quede de nxn
 def expandirCostos(matriz,atiende):
     nueva=[]
+    global strRespuesta
     for i,val in enumerate(atiende):
         for j in range(0,val):
             nueva.append(deepcopy(matriz[i]))
+    strRespuesta+=("\n".join(["\t".join(map(str, r)) for r in nueva]))
+    strRespuesta+="\n\n"
     return nueva
 
 def eliminaRepetidos(soluciones,atiende):#en caso de que hayan que atienden varios, se eliminan las opciones repetidas
@@ -258,6 +273,10 @@ def eliminaRepetidos(soluciones,atiende):#en caso de que hayan que atienden vari
 #tipo 0 minimizar 1 maximizar
 #atiende: arreglo con la cantidad que atiende cada proveedor
 def hungaro(matrizCostos,tipo,atiende):
+    global strRespuesta,todaMatrices
+    strRespuesta=''
+    todaMatrices=[]
+
     matrizCostos=expandirCostos(matrizCostos,atiende)
     costos=matrizCostos
 
@@ -269,12 +288,15 @@ def hungaro(matrizCostos,tipo,atiende):
     while(len(p2[0])+len(p2[1])<len(matrizCostos)):#mientas no se hayan hecho suficientes marcas
         p3=operaMenor(p1,p2)#resta a todos los no marcados el menor, y a la interseccion se lo suma
         p2=marcarLineas(p3)#vuelve a marcar lineas
+        strRespuesta+=("\n".join(["\t".join(map(str, r)) for r in p3]))
+        strRespuesta+="\n\n"
     filasCeros=getFilas(contarCeros(p3))#arreglo con las posiciones donde estan los 0's en cada fila
     soluciones=eliminaRepetidos(getSoluciones(filasCeros),atiende)
     printSolucion(evaluar(costos,soluciones,tipo),atiende)
+    return strRespuesta
 
 
-#hungaro([[10,9,5],[9,8,3],[6,4,7]],0,[1,1,1])
+hungaro([[10,9,5],[9,8,3],[6,4,7]],0,[1,1,1])
 #hungaro([[13,7,12,12],[10,13,15,7],[13,10,8,7]],1,[1,2,1])
 #hungaro([[10,8,2],[3,9,3],[4,10,5]],0,[1,1,1])#tiene 3 soluciones
 #hungaro([[15,10,9],[9,15,10],[10,12,8]],0,[1,1,1])

@@ -3,6 +3,17 @@ from Enums import SimplexFamily
 
 import Graficador
 import PL
+from Dinamica.Mochila import mochila
+from Dinamica.Reemplazo import reemplazo
+from Transporte.Hungaro import hungaro
+from Transporte.Vogel import vogel
+from Transp import  transporte,setTabla
+from Transporte.EsquinaNoroeste import esquinaNoroestre
+from Parser.Parser_Reemplazo import ParserReemplazo
+from Parser.Parser_Transporte import ParserTransporte
+from Parser.Parser_Vogel import ParserVogel
+from Parser.Parser_Hungaro import ParserHungaro
+from Parser.Parser_Mochila import ParserMochila
 from Parser.Parser_PL import ParserPLG
 from Parser.PosParser import Posparser
 from Parser.PreParser import Preparser
@@ -60,6 +71,23 @@ class Application(tk.Frame):
         self.Dual = tk.Button(self, text="Dual", command=self._Dual)
         self.Dual.grid(column=12, row=7)
 
+        # Hungaro
+        self.Hungaro = tk.Button(self, text="Hungaro", command=self._hungaro)
+        self.Hungaro.grid(column=6, row=2)
+        # Vogel
+        self.Vogel = tk.Button(self, text="Vogel", command=self._vogel)
+        self.Vogel.grid(column=6, row=3)
+        # EsquinaNoroeste
+        self.Esquina = tk.Button(self, text="EsquinaNoroeste", command=self._esquina)
+        self.Esquina.grid(column=6, row=4)
+
+        # Mochila
+        self.Mochila = tk.Button(self, text="Mochila", command=self._mochila)
+        self.Mochila.grid(column=7, row=2)
+        # Reemplazo
+        self.Reemplazo = tk.Button(self, text="Reemplazo", command=self._reemplazo)
+        self.Reemplazo.grid(column=7, row=3)
+
     def load(self):
         self.file = askopenfilename()
         pre = Preparser(self.file)
@@ -98,17 +126,113 @@ class Application(tk.Frame):
         objetivo = pos.funcion_objetivo
         DataGraficar = PL.getDatosPL(origin, restric, objetivo)
         puntos = DataGraficar[0]
+
+
         max_x = int(math.ceil(DataGraficar[1] * 1.10))
         max_y = int(math.ceil(DataGraficar[2] * 1.10))
 
-        po = PL.getPtosOptimos(puntos, objetivo, pos.tipo);
-
-        Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
-
-
+        if(puntos!=[]):
+            po = PL.getPtosOptimos(puntos, objetivo, pos.tipo)
+            Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
+        else:
+            showerror("Error", "No Solucion")
+            Graficador.dibujar(puntos,[],[], restric, origin, max_x, max_y)
     def _transporte(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parserTran=ParserTransporte(text_f_get)
+        parser = ParserPLG()
+
+        parser.init(transporte(parserTran.PL))
+
+        pos = Posparser(parser.fo, parser.eq, parser.Mm)
+        origin = pos.get_originals()
+        restric = pos.get_restrictions()
+
+        objetivo = pos.funcion_objetivo
+        DataGraficar = PL.getDatosPL(origin, restric, objetivo)
+        puntos = DataGraficar[0]
+
+
+        max_x = int(math.ceil(DataGraficar[1] * 1.10))
+        max_y = int(math.ceil(DataGraficar[2] * 1.10))
+
+        if(puntos!=[]):
+            po = PL.getPtosOptimos(puntos, objetivo, pos.tipo)
+            setTabla(po[0])
+            Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
+
+        else:
+            showerror("Error", "No Solucion")
+            Graficador.dibujar(puntos,[],[], restric, origin, max_x, max_y)
+        pass
+    def _hungaro(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserHungaro(text_f_get)
+        top = tk.Toplevel()
+        string=hungaro(parser.costos,parser.tipo,parser.atiende)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
         pass
 
+    def _vogel(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserVogel(text_f_get)
+        top = tk.Toplevel()
+        string=vogel(parser.costos)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+        pass
+
+    def _esquina(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserVogel(text_f_get)#si usa el mismo parser que el vogel
+        top = tk.Toplevel()
+        string=esquinaNoroestre(parser.costos)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+        pass
+
+
+    def _mochila(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserMochila(text_f_get)
+        top = tk.Toplevel()
+        string=mochila(parser.articulos,parser.contenedor)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+        pass
+
+    def _reemplazo(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserReemplazo(text_f_get)
+        top = tk.Toplevel()
+        string=reemplazo(parser.anoInicial,parser.periodo,parser.remplazoI,parser.remplazoF,parser.costoMaquina,parser.costos)
+        msg = tk.Text(top,height=40, width=130)
+        msg.insert("1.0",string)
+        msg.pack()
+        pass
     def _simplex(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
         if text_f_get[-1] == "\n":

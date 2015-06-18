@@ -8,28 +8,30 @@ from Tools import findInt, findXY, setdiff
 
 def despejar(f, var):
     a = solve(f, var)
-    print(str(a[0]))
+    #print(str(a[0]))
     return str(a[0])
 
 
 def dibujar(puntos, ptosOptimos, valorOptimo, equations, originals, lenght_x, lenght_y):
     # lenght_x=20
     # lenght_y=20
-    area = plt.Polygon(puntos, closed=True, alpha=0.5)
+    if(puntos!=[]):
+        area = plt.Polygon(puntos, closed=True, alpha=0.5)
     ax = plt.gca()
     ax.cla()
 
     ax.set_xlim((0, lenght_x ))
     ax.set_ylim((0, lenght_y ))
     ax.set_aspect('equal')
-    fig = plt.gcf()
-    fig.gca().add_artist(area)
+    if(puntos!=[]):
+         fig = plt.gcf()
+         fig.gca().add_artist(area)
 
     x = np.linspace(0, lenght_x)
-
     for eq in equations:
         xy = findXY(eq)
         if xy == 0:
+
             ax.plot(x, eval(despejar(eq, "y")), lw=2.0)
         else:
             entero = findInt(eq)
@@ -44,14 +46,15 @@ def dibujar(puntos, ptosOptimos, valorOptimo, equations, originals, lenght_x, le
                 y = (entero, entero)
                 ax.plot(x1, y, lw=2.0)
     optimos = []
-    for opdot in ptosOptimos:
-        opdot_x = opdot[0]
-        opdot_y = opdot[1]
-        optimos.append("{} = {}".format(opdot, valorOptimo))
-        ax.plot(opdot_x, opdot_y, "p", markersize=12, lw=2.0)
-    others = setdiff(puntos, ptosOptimos)
-    for dot in others:
-        ax.plot(dot[0], dot[1], "o", lw=2.0)
+    if(ptosOptimos!=[]):
+        for opdot in ptosOptimos:
+            opdot_x = opdot[0]
+            opdot_y = opdot[1]
+            optimos.append("{} = {}".format(opdot, valorOptimo))
+            ax.plot(opdot_x, opdot_y, "p", markersize=12, lw=2.0)
+        others = setdiff(puntos, ptosOptimos)
+        for dot in others:
+            ax.plot(dot[0], dot[1], "o", lw=2.0)
 
     ax.grid('on')
 
