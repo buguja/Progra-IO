@@ -106,7 +106,7 @@ class ContratacionEmpleados:
             self.OutPut.append(strbf.format("Semana #", "Contratar",width=leng))
             for i,sol in enumerate(sol):
                 self.OutPut.append(strbf.format(i,sol,width=leng))
-            self.OutPut.append("Costo {}\n".format(self.matrix_etapa[0][-1][-1]))
+        self.OutPut.append("Costo {}\n".format(self.matrix_etapa[0][-1][-2]))
         self.OutPut.append("\n")
 
     def PrintT(self):
