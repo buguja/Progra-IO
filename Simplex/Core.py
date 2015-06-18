@@ -81,7 +81,7 @@ class SimplexCore:
         pivote_c = submatrix[index_pivote_c_1]
         # si no hay empate en el paso pasado
         if self.empateFlag:
-            self.Solucion = "Degenerado"
+            self.Output.append("Degenerado")
         if not self.empateFlag:
             # dividir ValSol / columna pivote
             list_div = [special_div(self.val_sol[i] , pivote_c[i]) for i in range(0, self.heigth-self.Zcuantity)]
@@ -110,7 +110,7 @@ class SimplexCore:
         len_a = len(self.artificial)
         if(temp<len_a):
             return (self.artificial,temp)
-        self.Solucion = "ERROR"
+        self.Output.append("ERROR")
         return temp-len_a
 
     def map_pivote(self, matrix, pivote, index):
@@ -196,11 +196,19 @@ class SimplexCore:
             # Hay almenos 1, iterar una vez más
             return False
         # Revisar por el sol multiple
+
+        self.Output.append("~~~~~~~~~-----Solucion-----~~~~~~~~~")
+        for i,elem in enumerate(self.base):
+            if not "x" in elem:
+                continue
+            self.Output.append("{} = {}".format(elem,self.val_sol[i]))
+        self.Output.append("Solucion = {}".format(self.val_sol[-1]))
+
         diff = list(set(range(0, len([zero[-1] for zero in self.decision if zero[-1] == 0]))) - set(self.inlist))
         # Hay 0 de diff
         if (len(diff) > 0):
             # Caso Multiple
-            self.Solucion = "Multiple"
+            self.Output.append("Solución Multiple")
             self.multipleFlag = diff
             return False
         # end
@@ -225,7 +233,7 @@ class SimplexCore:
     def CheckAcotada(self):
         for var_d in self.decision:
             if 0 == len([z for z in var_d if z >= 0]):
-                self.Solucion = "No acotada"
+                self.Output.append("No acotada")
                 return False
         return True
 

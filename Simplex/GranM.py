@@ -47,4 +47,4 @@ class GranM(SimplexCore):
         else:
             self.Prep()
             self.Output.append(str(self))
-            self.SimplexIterate()
+            return self.SimplexIterate()

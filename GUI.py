@@ -45,6 +45,9 @@ class Application(tk.Frame):
         self.Loader["command"] = self.load
         self.Loader["width"] = 50
         self.Loader.grid(row=0, column=0, columnspan=3)
+        #Borrar
+        self.Borrar = tk.Button(self, text="Borrar", command=self._Borrar)
+        self.Borrar.grid(row=0, column=8, columnspan=3)
         # file name
         self.FileName = tk.Label(self)
         self.FileName["text"] = "Archivo"
@@ -168,31 +171,25 @@ class Application(tk.Frame):
 
         if(puntos!=[]):
             po = PL.getPtosOptimos(puntos, objetivo, pos.tipo)
-            top = tk.Toplevel()
             string=setTabla(po[0][0])
-            msg = tk.Text(top,height=40, width=130)
-            msg.insert("1.0",string)
-            msg.pack()
+            self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+            self.TextF.insert("end",string)
             Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
-
-
-
         else:
             showerror("Error", "No Solucion")
             Graficador.dibujar(puntos,[],[], restric, origin, max_x, max_y)
-        pass
+        
     def _hungaro(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
         if text_f_get[-1] == "\n":
             showerror("Error", "Retire todos los saltos de linea al final inecesarios")
             return
         parser=ParserHungaro(text_f_get)
-        top = tk.Toplevel()
         string=hungaro(parser.costos,parser.tipo,parser.atiende)
-        msg = tk.Text(top,height=40, width=130)
-        msg.insert("1.0",string)
-        msg.pack()
-        pass
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end",string)
+
+        
 
     def _vogel(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
@@ -200,12 +197,11 @@ class Application(tk.Frame):
             showerror("Error", "Retire todos los saltos de linea al final inecesarios")
             return
         parser=ParserVogel(text_f_get)
-        top = tk.Toplevel()
         string=vogel(parser.costos)
-        msg = tk.Text(top,height=40, width=130)
-        msg.insert("1.0",string)
-        msg.pack()
-        pass
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end",string)
+
+        
 
     def _esquina(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
@@ -213,12 +209,11 @@ class Application(tk.Frame):
             showerror("Error", "Retire todos los saltos de linea al final inecesarios")
             return
         parser=ParserVogel(text_f_get)#si usa el mismo parser que el vogel
-        top = tk.Toplevel()
         string=esquinaNoroestre(parser.costos)
-        msg = tk.Text(top,height=40, width=130)
-        msg.insert("1.0",string)
-        msg.pack()
-        pass
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end",string)
+
+        
 
 
     def _mochila(self):
@@ -227,12 +222,11 @@ class Application(tk.Frame):
             showerror("Error", "Retire todos los saltos de linea al final inecesarios")
             return
         parser=ParserMochila(text_f_get)
-        top = tk.Toplevel()
         string=mochila(parser.articulos,parser.contenedor)
-        msg = tk.Text(top,height=40, width=130)
-        msg.insert("1.0",string)
-        msg.pack()
-        pass
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end",string)
+
+        
 
     def _reemplazo(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
@@ -240,13 +234,12 @@ class Application(tk.Frame):
             showerror("Error", "Retire todos los saltos de linea al final inecesarios")
             return
         parser=ParserReemplazo(text_f_get)
-        top = tk.Toplevel()
         string=reemplazo(parser.anoInicial,parser.periodo,parser.remplazoI,parser.remplazoF,parser.costoMaquina,parser.costos)
-        msg = tk.Text(top,height=40, width=130)
-        msg.insert("1.0",string)
-        msg.pack()
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end",string)
+
         graficar()
-        pass
+        
     def _simplex(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
         if text_f_get[-1] == "\n":
@@ -294,6 +287,9 @@ class Application(tk.Frame):
         empleados.Start()
         self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
         self.TextF.insert("end","\n".join(empleados.OutPut))
+
+    def _Borrar(self):
+        self.TextF.delete("1.0","end")
 
 root = tk.Tk()
 app = Application(master=root)

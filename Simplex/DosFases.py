@@ -107,5 +107,5 @@ class DosFases():
                 continue
             self.fase2.addRestricion(elem,self.sbrow(ret.decision,i), self.sbrow(ret.holgura,i),self.sbrow(ret.superhabit,i) ,ret.val_sol[i])
         ret2 = self.fase2.Start() if not self.fase2.chechSol() else self.fase2
-        self.Output+= ret2.Output
+        ret2.Output = self.Output + ret2.Output
         return ret2

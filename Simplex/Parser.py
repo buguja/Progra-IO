@@ -67,8 +67,6 @@ def SimplexParser(strlist,metodo):
             row.append(fo[ix+1])
 
 
-
-
         fo = tm_va
         restric = tmp_mx
 
