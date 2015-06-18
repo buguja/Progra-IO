@@ -187,6 +187,9 @@ Ruta
 
 
 
+
+
+
 #empleados
 100*x
 400+200*x
