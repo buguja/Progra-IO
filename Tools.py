@@ -41,3 +41,9 @@ def read(filenane):
     with open(filenane, encoding='utf-8') as file:
         data = file.read()
     return data
+
+def special_div(dividendo,divisor):
+    return -1 if divisor == 0 else dividendo/divisor
+
+def fill_w(sub, w=0):
+    return [w for _ in sub]
