@@ -90,7 +90,7 @@ class Application(tk.Frame):
         max_x = int(math.ceil(DataGraficar[1] * 1.10))
         max_y = int(math.ceil(DataGraficar[2] * 1.10))
 
-        po = PL.getPtosOptimos(puntos, objetivo, 1);
+        po = PL.getPtosOptimos(puntos, objetivo, pos.tipo);
 
         Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
 

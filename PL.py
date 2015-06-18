@@ -158,9 +158,9 @@ def getPtosOptimos(puntos, FO, determin):  # determin 1 Max 0 para Min
     y = puntos[0][1]
     ptoOp = eval(FO)
     ptosOptimos.append((x, y))  #se agrega el primer punto para tener un margen de comparacion
-    if determin == 1:
+    if determin == '1':
         fun = lambda x: x >= ptoOp
-    elif determin == 0:
+    if determin == '0':
         fun = lambda x: x <= ptoOp
 
     puntos = puntos[1:]
