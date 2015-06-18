@@ -7,10 +7,14 @@ ft=[]
 remI=0
 I=0
 anoMax=0
+lap=0
+rI=0
+rF=0
+m=[]
 
 strRespuesta=''
 todaMatrices=[]
-
+from Graficador import grafico
 def RespuestaFinal(Matriz):
     global strRespuesta
     s = [[str(e) for e in row] for row in Matriz]
@@ -116,10 +120,13 @@ def respuesta():
     strRespuesta+="La ganancia tota es de "+str(costoTotal)
 
 
+def graficar():
+    global lap,rI,rF,mL
+    grafico(lap+2,rF+1,rI,rF,mL)
 
 
 def reemplazo(inicial,lapso,remplazoI,remplazoF,Icosto,Mcostos):
-    global rt,ct,st,ft,I,anoMax,remI,strRespuesta,todaMatrices
+    global rt,ct,st,ft,I,anoMax,remI,strRespuesta,todaMatrices,lap,rI,rF,mL
     rt=[]
     ct=[]
     st=[]
@@ -127,6 +134,10 @@ def reemplazo(inicial,lapso,remplazoI,remplazoF,Icosto,Mcostos):
     remI=0
     I=0
     anoMax=0
+    lap=lapso
+    rI=remplazoI
+    rF=remplazoF
+
 
     strRespuesta=''
     todaMatrices=[]
@@ -143,19 +154,18 @@ def reemplazo(inicial,lapso,remplazoI,remplazoF,Icosto,Mcostos):
     matrizllena=llenarMatriz(inicial,lapso,remplazoI,remplazoF,0,matriz)
     for i in range(0,lapso):#esto llena lo del grafico
         matrizllena[i]=list(set(matrizllena[i]))
-
     mat=ultimaEtapa(matrizllena[len(matrizllena)-1])
     ft.append(getColumn(3,mat))
     ft.append(getColumn(0,mat))
-
+    mL=matrizllena
     matrizllena.pop()
     for val in reversed(matrizllena):
         etapas(val)
 
-    #print(todaMatrices)
     respuesta()
     return strRespuesta
 #ano inicial,periodo,lapso del remplazo,lapso remplazo,costo maquina,costos)
+
 
 
 '''
@@ -166,8 +176,8 @@ reemplazo(2,4,3,5,100000,[[20000,200,0],
                           [15500,1700,30000],
                           [14000,1800,10000],
                           [12200,2200,5000]])
-'''
 
+'''
 
 '''
 reemplazo(3,4,1,5,100000,[[20000,200,0],
@@ -177,4 +187,5 @@ reemplazo(3,4,1,5,100000,[[20000,200,0],
                           [15500,1700,30000],
                           [14000,1800,10000],
                           [12200,2200,5000]])
-                          '''
+'''
+

@@ -7,6 +7,7 @@ from Dinamica.Mochila import mochila
 from Dinamica.Reemplazo import reemplazo
 from Transporte.Hungaro import hungaro
 from Transporte.Vogel import vogel
+from Dinamica.Reemplazo import graficar
 from Transp import  transporte,setTabla
 from Transporte.EsquinaNoroeste import esquinaNoroestre
 from Parser.Parser_Reemplazo import ParserReemplazo
@@ -238,6 +239,7 @@ class Application(tk.Frame):
         msg = tk.Text(top,height=40, width=130)
         msg.insert("1.0",string)
         msg.pack()
+        graficar()
         pass
     def _simplex(self):
         text_f_get = self.TextF.get("1.0", "end-1c")

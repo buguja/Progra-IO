@@ -62,6 +62,26 @@ def dibujar(puntos, ptosOptimos, valorOptimo, equations, originals, lenght_x, le
 
     plt.show()
 
+def grafico(lenght_x, lenght_y,remplazoI,remplazoF,anos):
+    ax = plt.gca()
+    ax.set_xlim((1, lenght_x ))
+    ax.set_ylim((0, lenght_y ))
+
+    for i,val in enumerate(anos):
+        for j,val2 in enumerate(val):
+            if(val2<remplazoI):
+                ax.plot((i+1,i+2),(val2,val2+1),color="red")
+            if(remplazoI<=val2<=remplazoF):
+                ax.plot((i+1,i+2),(val2,val2+1),color="red")
+                ax.plot((i+1,i+2),(val2,1),color="blue")
+            if(val2>remplazoF):
+                ax.plot((i+1,i+2),(val2,1),color="blue")
+    #ax.plot((1,2),(3,1))
+
+
+    ax.grid('on')
+    plt.show()
+
 
 
 
