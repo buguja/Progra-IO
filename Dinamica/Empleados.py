@@ -83,7 +83,7 @@ class ContratacionEmpleados:
                 self.AuxCheckSol(2, subsol, 0)
             else:
                 self.currntSol += 1
-                self.sols.append(self.sols[0])
+                self.sols.append(self.sols[0][:])
                 self.AuxCheckSol(2, subsol, self.currntSol)
 
     def AuxCheckSol(self, etapa, last, solnum):
@@ -96,7 +96,7 @@ class ContratacionEmpleados:
                 self.AuxCheckSol(etapa + 1, subsol, solnum)
             else:
                 self.currntSol += 1
-                self.sols.append(self.sols.append(self.sols[solnum]))
+                self.sols.append(self.sols.append(self.sols[solnum][:]))
                 self.AuxCheckSol(etapa + 1, subsol, self.currntSol)
 
     def PrintR(self):
@@ -106,7 +106,7 @@ class ContratacionEmpleados:
             self.OutPut.append(strbf.format("Semana #", "Contratar",width=leng))
             for i,sol in enumerate(sol):
                 self.OutPut.append(strbf.format(i,sol,width=leng))
-            self.OutPut.append("\n")
+            self.OutPut.append("Costo {}\n".format(self.matrix_etapa[0][-1][-1]))
         self.OutPut.append("\n")
 
     def PrintT(self):
