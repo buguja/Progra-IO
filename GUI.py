@@ -150,8 +150,14 @@ class Application(tk.Frame):
 
         if(puntos!=[]):
             po = PL.getPtosOptimos(puntos, objetivo, pos.tipo)
-            setTabla(po[0])
+            top = tk.Toplevel()
+            string=setTabla(po[0][0])
+            msg = tk.Text(top,height=40, width=130)
+            msg.insert("1.0",string)
+            msg.pack()
             Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
+
+
 
         else:
             showerror("Error", "No Solucion")
