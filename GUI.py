@@ -1,4 +1,5 @@
 import math
+from Enums import SimplexFamily
 
 import Graficador
 import PL
@@ -16,7 +17,7 @@ from Parser.Parser_Mochila import ParserMochila
 from Parser.Parser_PL import ParserPLG
 from Parser.PosParser import Posparser
 from Parser.PreParser import Preparser
-
+from Simplex.Parser import SimplexParser
 
 __author__ = 'José Pablo Parajeles'
 
@@ -34,12 +35,13 @@ class Application(tk.Frame):
 
     # noinspection PyAttributeOutsideInit
     def create_widgets(self):
+
         # file loader
         self.Loader = tk.Button(self)
         self.Loader["text"] = "Abrir"
         self.Loader["command"] = self.load
         self.Loader["width"] = 50
-        self.Loader.grid(row=0, column=0, columnspan=4)
+        self.Loader.grid(row=0, column=0, columnspan=3)
         # file name
         self.FileName = tk.Label(self)
         self.FileName["text"] = "Archivo"
@@ -48,17 +50,26 @@ class Application(tk.Frame):
         self.FileNameName = tk.Label(self, text="file")
         self.FileNameName.grid(row=1, column=1, columnspan=3)
         # text
-        self.TextF = tk.Text(self, height=30, width=50)
-        self.TextF.grid(column=0, row=2, rowspan=5, columnspan=4)
+        self.TextF = tk.Text(self, height=30, width=150)
+        self.TextF.grid(column=0, row=2, rowspan=10, columnspan=10)
         # Metodo Grafico
         self.Metodo_Grafico = tk.Button(self, text="Método Grafico", command=self._metodo_grafico)
-        self.Metodo_Grafico.grid(column=5, row=2)
+        self.Metodo_Grafico.grid(column=12, row=2)
         # Transporte
         self.Transporte = tk.Button(self, text="Transporte", command=self._transporte)
-        self.Transporte.grid(column=5, row=3)
+        self.Transporte.grid(column=12, row=3)
         # Simplex
-        self.Transporte = tk.Button(self, text="Simplex", command=self._simplex)
-        self.Transporte.grid(column=5, row=4)
+        self.Simplex = tk.Button(self, text="Simplex", command=self._simplex)
+        self.Simplex.grid(column=12, row=4)
+        # GranM
+        self.GranM = tk.Button(self, text="GranM", command=self._GranM)
+        self.GranM.grid(column=12, row=5)
+        # DosFases
+        self.DosFases = tk.Button(self, text="DosFases", command=self._DosFases)
+        self.DosFases.grid(column=12, row=6)
+        # Dual
+        self.Dual = tk.Button(self, text="Dual", command=self._Dual)
+        self.Dual.grid(column=12, row=7)
 
         # Hungaro
         self.Hungaro = tk.Button(self, text="Hungaro", command=self._hungaro)
@@ -223,10 +234,43 @@ class Application(tk.Frame):
         msg.pack()
         pass
     def _simplex(self):
-        pass
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        strl = text_f_get.split("\n")
+        ret = SimplexParser(strl,SimplexFamily.Simplex)
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end","\n".join(ret[1].Output))
+    def _GranM(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        strl = text_f_get.split("\n")
+        ret = SimplexParser(strl,SimplexFamily.GranM)
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end","\n".join(ret[1].Output))
+    def _DosFases(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        strl = text_f_get.split("\n")
+        ret = SimplexParser(strl,SimplexFamily.DosFases)
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end","\n".join(ret[1].Output))
+    def _Dual(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        strl = text_f_get.split("\n")
+        ret = SimplexParser(strl,SimplexFamily.Dual)
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end","\n".join(ret[1].Output))
 
 
 root = tk.Tk()
 app = Application(master=root)
-
 app.mainloop()
