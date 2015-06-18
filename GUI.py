@@ -46,8 +46,17 @@ class Application(tk.Frame):
         self.Transporte = tk.Button(self, text="Transporte", command=self._transporte)
         self.Transporte.grid(column=5, row=3)
         # Simplex
-        self.Transporte = tk.Button(self, text="Simplex", command=self._simplex)
-        self.Transporte.grid(column=5, row=4)
+        self.Simplex = tk.Button(self, text="Simplex", command=self._simplex)
+        self.Simplex.grid(column=5, row=4)
+        # GranM
+        self.GranM = tk.Button(self, text="Simplex", command=self._GranM)
+        self.GranM.grid(column=5, row=5)
+        # DosFases
+        self.DosFases = tk.Button(self, text="Simplex", command=self._DosFases)
+        self.DosFases.grid(column=5, row=6)
+        # Dual
+        self.Dual = tk.Button(self, text="Simplex", command=self._Dual)
+        self.Dual.grid(column=5, row=7)
 
     def load(self):
         self.file = askopenfilename()
@@ -99,6 +108,12 @@ class Application(tk.Frame):
         pass
 
     def _simplex(self):
+        pass
+    def _GranM(self):
+        pass
+    def _DosFases(self):
+        pass
+    def _Dual(self):
         pass
 
 

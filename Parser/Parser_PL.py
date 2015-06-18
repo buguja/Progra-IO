@@ -1,6 +1,6 @@
 __author__ = 'José Pablo'
 
-from Tools import IsDigit, IsOperator, IsComparator
+from Tools import IsDigit, IsOperator, IsComparator, isB, BStack, isBClose
 
 
 class ParserPLG:
@@ -38,6 +38,7 @@ class ParserPLG:
             chars = []
             errorcode = False
             comparador = False
+            bcount = 0
             for c in eaq:
                 if c == " ":
                     continue
@@ -55,6 +56,10 @@ class ParserPLG:
                     elif IsComparator(c):
                         errorcode = True
                         break
+                    elif isB(c):
+                        bcount = BStack(c,bcount)
+                        chars.append(c)
+
                     else:
                         cnext = self.__next_sub(c)
                         self.keys[cnext] = c
@@ -70,6 +75,32 @@ class ParserPLG:
                         else:
                             chars.append(c)
                             comparador = True
+                    elif isBClose(c):
+                        bcount = BStack(c,bcount)
+                        chars.append(c)
+                    elif isB(c):
+                        errorcode = True
+                        break
+                    else:
+                        cnext = self.__next_sub(c)
+                        self.keys[cnext] = c
+                        self.vals[c] = cnext
+                        chars.append(cnext)
+                elif isB(lastchar):
+                    if IsDigit(c):
+                        chars.append(c)
+                    elif IsOperator(c):
+                        if c == "+" or c == "-":
+                            chars.append(c)
+                        else:
+                            errorcode = True
+                            break
+                    elif IsComparator(c):
+                        errorcode = True
+                        break
+                    elif isB(c):
+                        bcount=BStack(c,bcount)
+                        chars.append(c)
                     else:
                         cnext = self.__next_sub(c)
                         self.keys[cnext] = c
@@ -87,6 +118,9 @@ class ParserPLG:
                     elif IsComparator(c):
                         errorcode = True
                         break
+                    elif isB(c):
+                        bcount=BStack(c,bcount)
+                        chars.append(c)
                     else:
                         cnext = self.__next_sub(c)
                         self.keys[cnext] = c
@@ -98,6 +132,9 @@ class ParserPLG:
                     elif IsOperator(c):
                         errorcode = True
                         break
+                    elif isB(c):
+                        bcount=BStack(c,bcount)
+                        chars.append(c)
                     elif IsComparator(c):
                         if c == "=" and lastchar != "=":
                             chars.append(c)
@@ -113,6 +150,12 @@ class ParserPLG:
                     if IsDigit(c):
                         errorcode = True
                         break
+                    elif isBClose(c):
+                        bcount = BStack(c,bcount)
+                        chars.append(c)
+                    elif isB(c):
+                        errorcode = True
+                        break
                     elif IsOperator(c):
                         chars.append(c)
                     elif IsComparator(c):
@@ -126,7 +169,7 @@ class ParserPLG:
                         errorcode = True
                         break
                 lastchar = c
-            if errorcode:
+            if errorcode or bcount != 0:
                 self.errorequa.append(eaq)
                 continue
             parsedeq.append("".join(chars))

@@ -2,9 +2,10 @@ import re
 
 __author__ = 'José Pablo'
 _digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9","."]
-_operators = ["+", "-", "*", "^", "(", ")", "/"]
+_operators = ["+", "-", "*", "^", "/"]
 _comparators = ["<", ">", "="]
-
+_OpenB = "("
+_CloseB =")"
 
 def IsDigit(x):
     return _digits.count(x) == 1
@@ -47,3 +48,16 @@ def special_div(dividendo,divisor):
 
 def fill_w(sub, w=0):
     return [w for _ in sub]
+
+def BStack(charz,count):
+    if charz == _OpenB:
+        count+=1
+    elif charz == _CloseB:
+        count-=1
+    return count
+
+def isB(charz):
+    return charz == _OpenB or charz == _CloseB
+
+def isBClose(charz):
+    return charz == _CloseB
