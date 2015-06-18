@@ -1,8 +1,9 @@
-import math
-from Enums import SimplexFamily
+__author__ = 'José Pablo Parajeles && Luis Diego Pizarro'
 
+import math
 import Graficador
 import PL
+from Enums import SimplexFamily
 from Dinamica.Mochila import mochila
 from Dinamica.Reemplazo import reemplazo
 from Transporte.Hungaro import hungaro
@@ -19,8 +20,9 @@ from Parser.Parser_PL import ParserPLG
 from Parser.PosParser import Posparser
 from Parser.PreParser import Preparser
 from Simplex.Parser import SimplexParser
+from Parser.Parser_Empleados import ContratacionEmpleados, ParserEMP
 
-__author__ = 'José Pablo Parajeles'
+
 
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
@@ -51,7 +53,7 @@ class Application(tk.Frame):
         self.FileNameName = tk.Label(self, text="file")
         self.FileNameName.grid(row=1, column=1, columnspan=3)
         # text
-        self.TextF = tk.Text(self, height=30, width=150)
+        self.TextF = tk.Text(self, height=30, width=130)
         self.TextF.grid(column=0, row=2, rowspan=10, columnspan=10)
         # Metodo Grafico
         self.Metodo_Grafico = tk.Button(self, text="Método Grafico", command=self._metodo_grafico)
@@ -74,20 +76,24 @@ class Application(tk.Frame):
 
         # Hungaro
         self.Hungaro = tk.Button(self, text="Hungaro", command=self._hungaro)
-        self.Hungaro.grid(column=6, row=2)
+        self.Hungaro.grid(column=13, row=2)
         # Vogel
         self.Vogel = tk.Button(self, text="Vogel", command=self._vogel)
-        self.Vogel.grid(column=6, row=3)
+        self.Vogel.grid(column=13, row=3)
         # EsquinaNoroeste
         self.Esquina = tk.Button(self, text="EsquinaNoroeste", command=self._esquina)
-        self.Esquina.grid(column=6, row=4)
+        self.Esquina.grid(column=13, row=4)
 
         # Mochila
         self.Mochila = tk.Button(self, text="Mochila", command=self._mochila)
-        self.Mochila.grid(column=7, row=2)
+        self.Mochila.grid(column=13, row=5)
         # Reemplazo
         self.Reemplazo = tk.Button(self, text="Reemplazo", command=self._reemplazo)
-        self.Reemplazo.grid(column=7, row=3)
+        self.Reemplazo.grid(column=13, row=6)
+        #empleados
+        self.Empleados = tk.Button(self, text="Empleados", command=self._empleados)
+        self.Empleados.grid(column=13, row=6)
+
 
     def load(self):
         self.file = askopenfilename()
@@ -278,6 +284,16 @@ class Application(tk.Frame):
         self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
         self.TextF.insert("end","\n".join(ret[1].Output))
 
+    def _empleados(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        strl = text_f_get.split("\n")
+        empleados = ParserEMP(strl)
+        empleados.Start()
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end","\n".join(empleados.OutPut))
 
 root = tk.Tk()
 app = Application(master=root)

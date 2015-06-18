@@ -1,3 +1,5 @@
+from Simplex.printing import matrix_str_w, head_m
+
 __author__ = 'José Pablo'
 
 
@@ -11,6 +13,7 @@ class ContratacionEmpleados:
         self.matrix_etapa = [[] for _ in ibi]
         self.sols = []
         self.currntSol = 0
+        self.OutPut = []
 
     def get_bi(self, i):
         return 0 if i == 0 else self.bi[i - 1]
@@ -96,15 +99,33 @@ class ContratacionEmpleados:
                 self.sols.append(self.sols.append(self.sols[solnum]))
                 self.AuxCheckSol(etapa + 1, subsol, self.currntSol)
 
-    def PrintB(self):
+    def PrintR(self):
         strbf = "{0}{1}\t{0}{1}".format("{",":^{width}}")
         for sol in self.sols:
             leng = max(max(map((lambda x:len(str(x))),sol)),10)
-            print(strbf.format("Semana #", "Contratar",width=leng))
+            self.OutPut.append(strbf.format("Semana #", "Contratar",width=leng))
             for i,sol in enumerate(sol):
-                print(strbf.format(i,sol,width=leng))
+                self.OutPut.append(strbf.format(i,sol,width=leng))
+            self.OutPut.append("\n")
+        self.OutPut.append("\n")
 
+    def PrintT(self):
+        for i,tabla in enumerate(self.matrix_etapa):
+            width = max(matrix_str_w(tabla),10)
+            im=i+1
+            len_t = len(tabla[0][1:-2])
+            heads = ["x{} = {}".format(im,elem) for elem in tabla[0][1:-2]]+["f{}(x{})".format(im,i),"x{}*".format(im)]
+            quantity = 3 + len_t
+            head = head_m(quantity).format("x{}".format(i), *heads, width=width)
+            matrix = [head_m(quantity).format(str(row[0]),*([str(elem) for elem in row[1:]]),width=width) for row in tabla[1:]]
+            matrix.insert(0,head)
+            self.OutPut.append("\n".join(matrix))
+            self.OutPut.append("\n")
+            self.OutPut.append("\n")
+        self.OutPut.append("\n")
 
     def Start(self):
         self.Iterate()
         self.CheckSol()
+        self.PrintT()
+        self.PrintR()
