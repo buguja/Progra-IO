@@ -22,17 +22,16 @@ def RespuestaFinal(Matriz):
 
 def setTabla(solucion):
     global matrizEquations,strRespuesta
-
     x=solucion[0]
     y=solucion[1]
-    nuevaMatriz=deepcopy(matrizEquations)
+    nuevaMatriz=[['','T1','T2','T3']]
     for i,val in enumerate(matrizEquations):
-        fila=[]
+        fila=["P"+str(i)]
         for j,val2 in enumerate(val):
-            nuevaMatriz[i][j]=eval(val2)
             fila.append(eval(val2))
         nuevaMatriz.append(fila)
-    print(nuevaMatriz)
+    RespuestaFinal(nuevaMatriz)
+    return strRespuesta
 
 #setTabla(matriz,[x,y])
 def setEquations(matriz):
