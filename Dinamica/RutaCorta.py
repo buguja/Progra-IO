@@ -56,13 +56,20 @@ def calcularEtapas(pesos):
             etapas.append(singleEtapa)
     return etapas
 
-'''
+
 def calcularRespuesta():
-    global todasMatrices
-    for i in reversed(todasMatrices):
-        nodo=i[len[i]-1]
-        strRespuesta+=str(nodo)
-'''
+    global strRespuesta,todasMatrices
+    nodo=todasMatrices[-1][0][-1]
+    strRespuesta+="1->"
+    strRespuesta+=str(nodo)+"->"
+    for i in reversed(todasMatrices[:-1]):
+        nodo=i[1][-1]
+        strRespuesta+=str(nodo)+"->"
+    strRespuesta=strRespuesta[:-2]
+    strRespuesta+="\nEl Costo es:"+str(todasMatrices[-1][0][-2])
+
+
+
 
 
 
@@ -72,6 +79,7 @@ def rutacorta(pesos):
     strRespuesta=''
     etapas=calcularEtapas(pesos)
     tablas(etapas,pesos)
+    calcularRespuesta()
     print(strRespuesta)
     return strRespuesta
 
