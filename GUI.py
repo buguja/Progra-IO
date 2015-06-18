@@ -6,8 +6,10 @@ from Dinamica.Mochila import mochila
 from Dinamica.Reemplazo import reemplazo
 from Transporte.Hungaro import hungaro
 from Transporte.Vogel import vogel
+from Transp import  transporte,setTabla
 from Transporte.EsquinaNoroeste import esquinaNoroestre
 from Parser.Parser_Reemplazo import ParserReemplazo
+from Parser.Parser_Transporte import ParserTransporte
 from Parser.Parser_Vogel import ParserVogel
 from Parser.Parser_Hungaro import ParserHungaro
 from Parser.Parser_Mochila import ParserMochila
@@ -113,13 +115,48 @@ class Application(tk.Frame):
         objetivo = pos.funcion_objetivo
         DataGraficar = PL.getDatosPL(origin, restric, objetivo)
         puntos = DataGraficar[0]
+
+
         max_x = int(math.ceil(DataGraficar[1] * 1.10))
         max_y = int(math.ceil(DataGraficar[2] * 1.10))
 
-        po = PL.getPtosOptimos(puntos, objetivo, pos.tipo);
+        if(puntos!=[]):
+            po = PL.getPtosOptimos(puntos, objetivo, pos.tipo)
+            Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
+        else:
+            showerror("Error", "No Solucion")
+            Graficador.dibujar(puntos,[],[], restric, origin, max_x, max_y)
+    def _transporte(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parserTran=ParserTransporte(text_f_get)
+        parser = ParserPLG()
 
-        Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
+        parser.init(transporte(parserTran.PL))
 
+        pos = Posparser(parser.fo, parser.eq, parser.Mm)
+        origin = pos.get_originals()
+        restric = pos.get_restrictions()
+
+        objetivo = pos.funcion_objetivo
+        DataGraficar = PL.getDatosPL(origin, restric, objetivo)
+        puntos = DataGraficar[0]
+
+
+        max_x = int(math.ceil(DataGraficar[1] * 1.10))
+        max_y = int(math.ceil(DataGraficar[2] * 1.10))
+
+        if(puntos!=[]):
+            po = PL.getPtosOptimos(puntos, objetivo, pos.tipo)
+            setTabla(po[0])
+            Graficador.dibujar(puntos, po[0], po[1], restric, origin, max_x, max_y)
+
+        else:
+            showerror("Error", "No Solucion")
+            Graficador.dibujar(puntos,[],[], restric, origin, max_x, max_y)
+        pass
     def _hungaro(self):
         text_f_get = self.TextF.get("1.0", "end-1c")
         if text_f_get[-1] == "\n":
@@ -185,10 +222,6 @@ class Application(tk.Frame):
         msg.insert("1.0",string)
         msg.pack()
         pass
-
-    def _transporte(self):
-        pass
-
     def _simplex(self):
         pass
 

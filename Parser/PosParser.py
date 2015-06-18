@@ -56,5 +56,9 @@ class Posparser:
         return self._restricciones[:]
 
     def get_originals(self):
-        return self._inequations[:]
+        ret = self._inequations[:]
+        for i,ineq in enumerate(ret):
+            if "=" in ineq and not ( ">" in ineq or "<" in ineq ):
+                ret[i] = ineq.replace("=", "==")
+        return ret
 

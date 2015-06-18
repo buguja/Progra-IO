@@ -157,6 +157,7 @@ def reemplazo(inicial,lapso,remplazoI,remplazoF,Icosto,Mcostos):
     return strRespuesta
 #ano inicial,periodo,lapso del remplazo,lapso remplazo,costo maquina,costos)
 
+
 '''
 reemplazo(2,4,3,5,100000,[[20000,200,0],
                           [19000,600,80000],

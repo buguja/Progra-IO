@@ -43,5 +43,3 @@ class Preparser:
             index += 5
         self.text = ("".join(ret + ["x>=0\n", "y>=0"]))
         return True
-
-

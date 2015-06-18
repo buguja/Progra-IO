@@ -8,6 +8,9 @@ from Tools import findXY, findInt
 
 
 def getDatosPL(originals, restricciones, FO):
+    '''print('hola')
+    print(restricciones)
+    print(originals)'''
     todospuntos = calcularPuntosEjes(restricciones)
     rectas = todospuntos[0]  # tiene los puntos para saber las rectas y luego calcular intersecciones
     puntosArea = todospuntos[1]  # guarda los puntos de dichas rectas
@@ -61,16 +64,20 @@ def intersection(L1, L2):
 
 # eilima los repetidos de una arreglo
 def eliminaRepetidos(lista):
-    lista_nueva = [lista[0]]
-    for i in lista:
-        repetido = 1
-        for y in lista_nueva:
-            if i == y:
-                repetido = 0
-                break
-        if repetido:
-            lista_nueva.append(i)
-    return lista_nueva
+    if(lista!=[]):
+        lista_nueva = [lista[0]]
+        for i in lista:
+            repetido = 1
+            for y in lista_nueva:
+                if i == y:
+                    repetido = 0
+                    break
+            if repetido:
+                lista_nueva.append(i)
+        return lista_nueva
+    else:
+        return lista
+
 
 
 def calcularPuntosEjes(ecuaciones):
@@ -133,8 +140,9 @@ def puntosSolucion(puntos, restricciones):
 
 
 def sortPointsPolygon(pp):
-    cent = (sum([p[0] for p in pp]) / len(pp), sum([p[1] for p in pp]) / len(pp))
-    pp.sort(key=lambda p: math.atan2(p[1] - cent[1], p[0] - cent[0]))
+    if(pp!=[]):
+        cent = (sum([p[0] for p in pp]) / len(pp), sum([p[1] for p in pp]) / len(pp))
+        pp.sort(key=lambda p: math.atan2(p[1] - cent[1], p[0] - cent[0]))
     return pp
 
 
