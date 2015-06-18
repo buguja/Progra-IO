@@ -21,6 +21,7 @@ from Parser.PosParser import Posparser
 from Parser.PreParser import Preparser
 from Simplex.Parser import SimplexParser
 from Parser.Parser_Empleados import ContratacionEmpleados, ParserEMP
+from Dinamica.RutaCorta import rutacorta
 
 
 
@@ -64,18 +65,19 @@ class Application(tk.Frame):
         # Transporte
         self.Transporte = tk.Button(self, text="Transporte", command=self._transporte)
         self.Transporte.grid(column=12, row=3)
+
         # Simplex
         self.Simplex = tk.Button(self, text="Simplex", command=self._simplex)
-        self.Simplex.grid(column=12, row=4)
+        self.Simplex.grid(column=12, row=5)
         # GranM
         self.GranM = tk.Button(self, text="GranM", command=self._GranM)
-        self.GranM.grid(column=12, row=5)
+        self.GranM.grid(column=12, row=6)
         # DosFases
         self.DosFases = tk.Button(self, text="DosFases", command=self._DosFases)
-        self.DosFases.grid(column=12, row=6)
+        self.DosFases.grid(column=12, row=7)
         # Dual
         self.Dual = tk.Button(self, text="Dual", command=self._Dual)
-        self.Dual.grid(column=12, row=7)
+        self.Dual.grid(column=12, row=8)
 
         # Hungaro
         self.Hungaro = tk.Button(self, text="Hungaro", command=self._hungaro)
@@ -87,15 +89,19 @@ class Application(tk.Frame):
         self.Esquina = tk.Button(self, text="EsquinaNoroeste", command=self._esquina)
         self.Esquina.grid(column=13, row=4)
 
+
+        # Mochila
+        self.Ruta_Corta = tk.Button(self, text="Ruta más Corta", command=self._Ruta_Corta)
+        self.Ruta_Corta.grid(column=13, row=5)
         # Mochila
         self.Mochila = tk.Button(self, text="Mochila", command=self._mochila)
-        self.Mochila.grid(column=13, row=5)
+        self.Mochila.grid(column=13, row=6)
         # Reemplazo
         self.Reemplazo = tk.Button(self, text="Reemplazo", command=self._reemplazo)
-        self.Reemplazo.grid(column=13, row=6)
+        self.Reemplazo.grid(column=13, row=7)
         #empleados
         self.Empleados = tk.Button(self, text="Empleados", command=self._empleados)
-        self.Empleados.grid(column=13, row=6)
+        self.Empleados.grid(column=13, row=8)
 
 
     def load(self):
@@ -198,6 +204,17 @@ class Application(tk.Frame):
             return
         parser=ParserVogel(text_f_get)
         string=vogel(parser.costos)
+        self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
+        self.TextF.insert("end",string)
+
+
+    def _Ruta_Corta(self):
+        text_f_get = self.TextF.get("1.0", "end-1c")
+        if text_f_get[-1] == "\n":
+            showerror("Error", "Retire todos los saltos de linea al final inecesarios")
+            return
+        parser=ParserVogel(text_f_get)
+        string=rutacorta(parser.costos)
         self.TextF.insert("end","\n\n-:--:--:--:--:--:--:--:--:--:--:--:--:--:-\n\n")
         self.TextF.insert("end",string)
 
