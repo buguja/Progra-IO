@@ -66,7 +66,7 @@ def calcularRespuesta():
         nodo=i[1][-1]
         strRespuesta+=str(nodo)+"->"
     strRespuesta=strRespuesta[:-2]
-    strRespuesta+="\nEl Costo es:"+str(todasMatrices[-1][0][-2])
+    strRespuesta+="\nEl Costo es: "+str(todasMatrices[-1][0][-2])
 
 
 
